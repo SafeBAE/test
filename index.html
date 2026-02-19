@@ -1578,6 +1578,7 @@ const actions = {
   start: ()=>go("bringsYouHere"),
   whyBtn: ()=>go("whyThisExists"),
   pathMenu: ()=>go("pathMenu"),
+  playGame: ()=>go("focusGame"),
   about: ()=>go("about"),
   restart: ()=>reset(),
   quickExit: ()=>window.location.replace("https://www.google.com/search?q="),
@@ -1700,6 +1701,30 @@ function breatheWidget(){
   `;
 }
 
+
+function cosmicDashMarkup(){
+  return `
+    <div class="h1">🚀 Cosmic Consent Dash</div>
+    <div class="p">Collect stars, dodge asteroids, and chase a new high score.</div>
+    <div class="note"><b>How to play:</b> Move with <b>←</b>/<b>→</b> (or A/D). Collect ✦ stars for points. Avoid ☄ asteroids. Last as long as you can.</div>
+
+    <div style="border:1px solid var(--border); border-radius:16px; padding:12px; background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03)); box-shadow: var(--shadow);">
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+        <div style="border:1px solid var(--border); border-radius:999px; padding:6px 10px; font-weight:900; font-size:12px;">Score: <span id="cd_score" style="color:var(--sb-mint)">0</span></div>
+        <div style="border:1px solid var(--border); border-radius:999px; padding:6px 10px; font-weight:900; font-size:12px;">Best: <span id="cd_best" style="color:var(--sb-mint)">0</span></div>
+        <div style="border:1px solid var(--border); border-radius:999px; padding:6px 10px; font-weight:900; font-size:12px;">Level: <span id="cd_level" style="color:var(--sb-mint)">1</span></div>
+        <button class="btn btnSmall" type="button" id="cd_restart" style="margin-left:auto;">Restart</button>
+      </div>
+      <canvas id="cd_game" width="900" height="420" style="width:100%; height:auto; border-radius: 14px; border: 1px solid var(--border); background: rgba(0,0,0,.28); touch-action: none; display:block;"></canvas>
+      <div style="margin-top:10px; font-size:12px; color: var(--muted);">Tip: On mobile, drag on the game area to steer.</div>
+    </div>
+
+    <div class="grid" style="margin-top:12px;">
+      <button class="btn btnPrimary" data-action="start">Back to reflection flow</button>
+    </div>
+  `;
+}
+
 function catRunnerMarkup(){
   return `
     <div class="note">
@@ -1802,6 +1827,132 @@ function startFog(){
   setTimeout(()=>{ if(fogMount) fogMount.innerHTML = ""; }, 6800);
 }
 
+
+let cosmicDashCleanup = null;
+
+function initCosmicDash(){
+  if (cosmicDashCleanup) cosmicDashCleanup();
+  const canvas = document.getElementById("cd_game");
+  const ctx = canvas?.getContext("2d");
+  if (!canvas || !ctx) return;
+
+  const scoreEl = document.getElementById("cd_score");
+  const bestEl = document.getElementById("cd_best");
+  const levelEl = document.getElementById("cd_level");
+  const restartBtn = document.getElementById("cd_restart");
+
+  const W = canvas.width, H = canvas.height;
+  const player = { x: W/2, y: H-52, r: 16, speed: 520 };
+  let stars = [], asteroids = [], particles = [];
+  let running = true, score = 0, level = 1;
+  let t = 0, starTimer = 0, rockTimer = 0;
+  let keys = { left:false, right:false };
+  let pointerActive = false;
+  let best = Number(localStorage.getItem("cosmicDashBest") || 0);
+
+  function spawnStar(){ stars.push({ x: Math.random()*(W-40)+20, y: -20, r: 9, v: 120 + level*18 }); }
+  function spawnRock(){ asteroids.push({ x: Math.random()*(W-36)+18, y: -30, r: 14 + Math.random()*10, v: 140 + level*40 }); }
+  function collide(a,b){ const dx=a.x-b.x, dy=a.y-b.y; return Math.hypot(dx,dy) < (a.r+b.r); }
+  function updateHud(){ scoreEl.textContent = score; bestEl.textContent = best; levelEl.textContent = level; }
+
+  function boom(x,y,cnt=18){ for(let i=0;i<cnt;i++){ particles.push({x,y,vx:(Math.random()*2-1)*220,vy:(Math.random()*2-1)*220,life:0.5+Math.random()*0.5}); } }
+
+  function reset(){
+    stars = []; asteroids = []; particles = [];
+    player.x = W/2;
+    running = true; score = 0; level = 1; t = 0; starTimer = 0; rockTimer = 0;
+    updateHud();
+  }
+
+  function onKey(e,val){
+    if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a') keys.left = val;
+    if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') keys.right = val;
+  }
+  const kd = e=>onKey(e,true), ku = e=>onKey(e,false);
+  window.addEventListener('keydown', kd);
+  window.addEventListener('keyup', ku);
+
+  function onPointer(e){
+    const rect = canvas.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width * W;
+    player.x += (px - player.x) * 0.25;
+  }
+  const pd=e=>{ pointerActive=true; onPointer(e); };
+  const pm=e=>{ if(pointerActive) onPointer(e); };
+  const pu=()=>{ pointerActive=false; };
+  canvas.addEventListener('pointerdown', pd);
+  canvas.addEventListener('pointermove', pm);
+  window.addEventListener('pointerup', pu);
+
+  restartBtn?.addEventListener('click', reset);
+
+  let raf = 0, last = performance.now();
+  function frame(now){
+    const dt = Math.min(0.033, (now-last)/1000); last = now;
+    t += dt;
+    level = 1 + Math.floor(score/20);
+
+    if (running){
+      if (keys.left) player.x -= player.speed * dt;
+      if (keys.right) player.x += player.speed * dt;
+      player.x = Math.max(player.r, Math.min(W-player.r, player.x));
+
+      starTimer += dt; rockTimer += dt;
+      if (starTimer > Math.max(0.35, 0.8 - level*0.04)){ starTimer = 0; spawnStar(); }
+      if (rockTimer > Math.max(0.25, 0.9 - level*0.05)){ rockTimer = 0; spawnRock(); }
+
+      for (const s of stars) s.y += s.v * dt;
+      for (const r of asteroids) r.y += r.v * dt;
+
+      stars = stars.filter(s=>{
+        if (collide(player,s)){ score += 5; boom(s.x,s.y,12); return false; }
+        return s.y < H+30;
+      });
+      asteroids = asteroids.filter(r=>{
+        if (collide(player,r)){ running = false; boom(player.x,player.y,30); return false; }
+        return r.y < H+30;
+      });
+
+      if (score > best){ best = score; localStorage.setItem('cosmicDashBest', String(best)); }
+      updateHud();
+    }
+
+    particles = particles.filter(p=>{ p.x += p.vx*dt; p.y += p.vy*dt; p.life -= dt; return p.life>0; });
+
+    ctx.clearRect(0,0,W,H);
+    const grad = ctx.createLinearGradient(0,0,0,H); grad.addColorStop(0,'#0c2130'); grad.addColorStop(1,'#102f3a');
+    ctx.fillStyle = grad; ctx.fillRect(0,0,W,H);
+    for(let i=0;i<80;i++){ const sx=(i*97 + (t*25)%W)%W; const sy=(i*53)%H; ctx.fillStyle='rgba(209,254,255,.35)'; ctx.fillRect(sx,sy,2,2);}    
+
+    ctx.font = '900 18px system-ui';
+    for (const s of stars){ ctx.fillStyle='#15FFC8'; ctx.fillText('✦', s.x-7, s.y+6); }
+    for (const r of asteroids){ ctx.beginPath(); ctx.fillStyle='#7fa6ad'; ctx.arc(r.x,r.y,r.r,0,Math.PI*2); ctx.fill(); }
+
+    ctx.beginPath(); ctx.fillStyle = '#D1FEFF'; ctx.moveTo(player.x, player.y-player.r-8); ctx.lineTo(player.x-player.r, player.y+player.r); ctx.lineTo(player.x+player.r, player.y+player.r); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#15FFC8'; ctx.fillRect(player.x-4, player.y+2, 8, 10);
+
+    for (const p of particles){ ctx.fillStyle=`rgba(21,255,200,${Math.max(0,p.life)})`; ctx.fillRect(p.x,p.y,3,3); }
+
+    if (!running){
+      ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.fillRect(0,0,W,H);
+      ctx.fillStyle = '#D1FEFF'; ctx.font = '900 44px system-ui'; ctx.fillText('Game Over', W/2-130, H/2-10);
+      ctx.font = '800 22px system-ui'; ctx.fillText('Press Restart to try again', W/2-135, H/2+28);
+    }
+
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+
+  cosmicDashCleanup = ()=>{
+    cancelAnimationFrame(raf);
+    window.removeEventListener('keydown', kd);
+    window.removeEventListener('keyup', ku);
+    canvas.removeEventListener('pointerdown', pd);
+    canvas.removeEventListener('pointermove', pm);
+    window.removeEventListener('pointerup', pu);
+    cosmicDashCleanup = null;
+  };
+}
 
 let catRunnerCleanup = null;
 
@@ -3081,6 +3232,7 @@ function render(){
   // Simple progress indicator map
   const progressMap = {
     landing: 0,
+    focusGame: 1,
     bringsYouHere: 1,
     entryDeescalate: 2,
     topScenario: 2,
@@ -3120,6 +3272,10 @@ function render(){
     </div>`;
   }
   const id = state.screenId;
+
+  if(id !== "focusGame" && cosmicDashCleanup){
+    cosmicDashCleanup();
+  }
 
   // Cleanup: stop ongoing-consent timers/listeners when leaving that screen
   if(id !== "H_relationship" && id !== "H_relationship_ongoing"){
@@ -3190,12 +3346,19 @@ function render(){
       "<b>Privacy:</b> This prototype collects no names, no account info, and stores nothing.",
       grid(
         btn("Start","start","btn btnPrimary") +
+        btn("Play Cosmic Consent Dash","playGame","btn") +
         btn("Why this exists","whyBtn","btn") +
         btn("Jump to pathways menu","pathMenu","btn")
       )
     );
 
     screen.innerHTML = progressBar(progressMap[id]) + spiral + mainCard;
+    return;
+  }
+
+  if(id==="focusGame"){
+    screen.innerHTML = backBtn() + cosmicDashMarkup();
+    setTimeout(initCosmicDash, 0);
     return;
   }
 
