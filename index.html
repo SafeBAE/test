@@ -2131,8 +2131,24 @@ let started = false;
     ctx.restore();
   }
 
+  function drawSpaceBackground(){
+    const grad = ctx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, '#0c2130');
+    grad.addColorStop(1, '#102f3a');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+
+    for (let i = 0; i < 80; i++) {
+      const sx = (i * 97 + (time * 80) % W) % W;
+      const sy = (i * 53) % H;
+      ctx.fillStyle = 'rgba(209,254,255,.35)';
+      ctx.fillRect(sx, sy, 2, 2);
+    }
+  }
+
 function drawStartOverlay(){
   ctx.clearRect(0, 0, W, H);
+  drawSpaceBackground();
   drawGround();
   drawPlayer();
 
@@ -2239,6 +2255,7 @@ function drawStartOverlay(){
 
   function draw() {
     ctx.clearRect(0, 0, W, H);
+    drawSpaceBackground();
     drawGround();
     for (const o of obstacles) drawObstacle(o);
     drawPlayer();
