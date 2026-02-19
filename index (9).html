@@ -1,0 +1,4445 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BAE Check — Reflection & Accountability</title>
+  <style>
+    :root{
+      /* SafeBAE palette */
+      --sb-light:#D1FEFF;
+      --sb-teal:#13848F;
+      --sb-mint:#15FFC8;
+      --sb-deep:#1D414E;
+
+      /* App tokens */
+      --bg: var(--sb-deep);
+      --text: var(--sb-light);
+      --muted: rgba(209,254,255,.78);
+      --border: rgba(209,254,255,.18);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:18px;
+      --accent: var(--sb-mint);
+      --danger: var(--sb-teal);
+    }
+
+/* ----------- NEW ALCOHOL STYLES ----------- */
+.alcoholRow{
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+}
+
+.alcoholIcon{
+  width:64px;   /* slightly larger */
+  min-width:64px;
+  height:auto;
+  margin-top:2px;
+}
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background:
+                  radial-gradient(1200px 800px at 20% 10%, rgba(21,255,200,.18), transparent 55%),
+                  radial-gradient(1000px 700px at 90% 20%, rgba(19,132,143,.22), transparent 60%),
+                  radial-gradient(900px 600px at 40% 100%, rgba(209,254,255,.10), transparent 55%),
+                  var(--bg);
+      color: var(--text);
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      padding: 28px 14px 60px;
+      transition: background 600ms ease;
+    }
+    .app{ width: min(540px, 100%); }
+    .topbar{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:14px; }
+    .brand { display:flex; align-items:center; gap:10px; }
+    .logo svg{ width:26px; height:36px; transform-origin: 50% 100%; animation: grow 7s ease-in-out infinite; }
+    @keyframes grow {
+      0%   { transform: scale(0.88) translateY(4px); opacity: .85; }
+      50%  { transform: scale(1.00) translateY(0px); opacity: 1; }
+      100% { transform: scale(0.92) translateY(2px); opacity: .92; }
+    }
+    .brand .title{ font-weight: 900; font-size: 16px; }
+    .neon-underline{
+      position: relative;
+      display: inline-block;
+    }
+    .neon-underline::after{
+      content:"";
+      position:absolute;
+      left:0;
+      bottom:-3px;
+      width:100%;
+      height:3px;
+      background:#15FFC8;
+      box-shadow:0 0 6px #15FFC8, 0 0 12px #15FFC8;
+      border-radius:2px;
+    }
+    .brand .subtitle{ font-size:12px; color: var(--muted); margin-top:2px; }
+    .topActions{ display:flex; gap:10px; }
+    .btn{
+      appearance:none; border:none;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-weight: 800;
+      cursor:pointer;
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      border: 1px solid var(--border);
+      transition: transform .06s ease, background .15s ease;
+      text-align:left;
+      width:100%;
+    }
+    .btn:hover{
+      background: rgba(21,255,200,.18); /* mint glow */
+      border: 1px solid rgba(21,255,200,.65);
+      box-shadow: 0 0 8px rgba(21,255,200,.35);
+      color: var(--sb-light);
+    }
+    .btn:active{ transform: translateY(1px); }
+    .btnSmall{ padding:10px 12px; border-radius: 999px; font-size: 12px; width:auto; }
+    .btnPrimary{
+      background: linear-gradient(135deg, rgba(21,255,200,.98), rgba(19,132,143,.85));
+      color:#041114; border: 1px solid rgba(209,254,255,.24);
+    }
+    .btnDanger{
+      background: rgba(19,132,143,.22);
+      border: 1px solid rgba(21,255,200,.30);
+      color: var(--sb-light);
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+    .h1{ font-size: 22px; margin:0 0 10px; font-weight: 900; line-height:1.2; }
+    .p{ margin:0 0 12px; color: var(--muted); line-height:1.45; }
+    .grid{ display:grid; gap:10px; margin-top: 12px;}
+    .note{
+      border-left: 3px solid rgba(21,255,200,.70);
+      background: rgba(21,255,200,.10);
+      padding: 10px 12px;
+      border-radius: 12px;
+      color: var(--sb-light);
+      font-size: 13px;
+      line-height:1.35;
+      margin: 10px 0 14px;
+    }
+    .footer{ margin-top:12px; display:flex; justify-content:space-between; gap:10px; font-size:12px; color: var(--muted);}
+    a.link{ color: var(--sb-mint); text-decoration:none; font-weight:800;}
+    a.link:hover{ text-decoration:underline;}
+    /* Inline action link (reads like body text, not a button) */
+    .inlineAction{
+      color: var(--sb-mint);
+      font-weight: 800;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .inlineAction:hover{ text-decoration: underline; }
+    .btnBack{
+      width:auto;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      color: var(--muted);
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      margin-bottom: 8px;
+    }
+    .btnBack:hover{ color: var(--text); background: rgba(255,255,255,.08); }
+    .mutedBox{
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px dashed rgba(255,255,255,.18);
+      color: var(--muted);
+      font-size: 12px;
+      line-height:1.35;
+    }
+
+
+    /* Button content (icon + label) */
+    .btnContent{ display:flex; align-items:center; gap:10px; }
+    .btnIcon{ width:22px; text-align:center; font-size:18px; line-height:1; opacity:.95; }
+    .btnLabel{ flex:1; }
+
+
+    /* Breathing icon (anxious/panicking page) */
+    .breatheWrap{
+      margin: 10px 0 14px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(21,255,200,.28);
+      background: rgba(21,255,200,.08);
+    }
+    .breathe{
+      width: 150px;
+      height: 150px;
+      display:block;
+      filter: drop-shadow(0 0 12px rgba(21,255,200,.18));
+    }
+
+    /* Animation layers */
+    .breatheCore{
+      transform-origin: 50% 50%;
+      animation: breathe 10s ease-in-out infinite; /* 4s in, 6s out */
+    }
+    .breatheRing{
+      transform-origin: 50% 50%;
+      animation: breatheRing 10s ease-in-out infinite;
+      opacity: .62;
+    }
+    .breatheHalo{
+      transform-origin: 50% 50%;
+      animation: halo 10s ease-in-out infinite;
+      opacity: .30;
+    }
+    .breatheDot{
+      transform-origin: 50% 50%;
+      animation: dot 10s ease-in-out infinite;
+      opacity: .9;
+    }
+
+    /* 0%→40% = inhale (4s) | 40%→100% = exhale (6s) */
+    @keyframes breathe{
+      0%   { transform: scale(0.86); opacity: .78; }
+      40%  { transform: scale(1.00); opacity: 1; }
+      100% { transform: scale(0.86); opacity: .82; }
+    }
+    @keyframes breatheRing{
+      0%   { transform: scale(0.92); opacity: .30; }
+      40%  { transform: scale(1.12); opacity: .62; }
+      100% { transform: scale(0.92); opacity: .30; }
+    }
+    @keyframes halo{
+      0%   { transform: scale(0.98); opacity: .18; }
+      40%  { transform: scale(1.22); opacity: .34; }
+      100% { transform: scale(0.98); opacity: .18; }
+    }
+    @keyframes dot{
+      0%   { transform: scale(0.92); opacity: .70; }
+      40%  { transform: scale(1.08); opacity: .95; }
+      100% { transform: scale(0.92); opacity: .75; }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .breatheCore, .breatheRing, .breatheHalo, .breatheDot{ animation: none; }
+    }
+
+
+
+/* Modal */
+.modalOverlay{
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(0,0,0,.92);   /* much darker backdrop */
+  backdrop-filter: none;        /* remove blur for clarity */
+  z-index: 9999;
+}
+
+.modal{
+  width: min(520px, 100%);
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: var(--sb-deep);   /* fully solid background */
+  box-shadow: 0 25px 70px rgba(0,0,0,.7);
+  padding: 24px;
+}
+
+.modalHeader{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.modalTitle{
+  font-weight: 950;
+  font-size: 18px;              /* slightly larger for clarity */
+}
+
+.modalClose{
+  width: auto;
+  padding: 8px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.modalActions{
+  display:flex;
+  gap:10px;
+  margin-top: 18px;
+}
+
+  
+/* ===== Fog Feature (Confused emotion) ===== */
+.fogOverlay{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:5;
+  border-radius: var(--radius);
+}
+.fogLayer{
+  position:absolute;
+  inset:-20%;
+  opacity:.88;
+  filter: blur(22px);
+  transform: scale(1.05);
+}
+.fogLayer::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(200px 140px at 20% 30%, rgba(209,254,255,.62), transparent 60%),
+    radial-gradient(280px 210px at 72% 40%, rgba(209,254,255,.42), transparent 66%),
+    radial-gradient(240px 180px at 42% 76%, rgba(21,255,200,.26), transparent 70%),
+    radial-gradient(360px 260px at 32% 92%, rgba(19,132,143,.18), transparent 72%);
+}
+.fog1{ animation: fogDrift1 5.2s ease-out forwards; }
+.fog2{ animation: fogDrift2 5.8s ease-out forwards; opacity:.72; filter: blur(26px); }
+.fog3{ animation: fogDrift3 6.3s ease-out forwards; opacity:.60; filter: blur(30px); }
+
+@keyframes fogDrift1{
+  0%   { opacity:.88; transform: translate3d(0,0,0) scale(1.06); }
+  70%  { opacity:.36; transform: translate3d(20px,-12px,0) scale(1.08); }
+  100% { opacity:0; transform: translate3d(44px,-22px,0) scale(1.10); }
+}
+@keyframes fogDrift2{
+  0%   { opacity:.72; transform: translate3d(0,0,0) scale(1.08); }
+  70%  { opacity:.30; transform: translate3d(-18px,10px,0) scale(1.10); }
+  100% { opacity:0; transform: translate3d(-38px,18px,0) scale(1.12); }
+}
+@keyframes fogDrift3{
+  0%   { opacity:.60; transform: translate3d(0,0,0) scale(1.10); }
+  70%  { opacity:.24; transform: translate3d(10px,18px,0) scale(1.12); }
+  100% { opacity:0; transform: translate3d(26px,36px,0) scale(1.14); }
+}
+@media (prefers-reduced-motion: reduce){
+  .fogLayer{ animation:none !important; opacity:0 !important; }
+}
+
+
+  
+
+/* ===== Spiral Interrupt (Ashamed) ===== */
+.siWrap /* Container */
+.wrap{
+  width:min(520px, 94vw);
+}.siWrap /* Collapsible "box" */
+.panel{
+  border-radius: var(--radius);
+  border:1px solid var(--border);
+  background: rgba(21,255,200,.06);
+  box-shadow: var(--shadow);
+  overflow:hidden;
+}.siWrap /* Clickable header */
+.panelHeader{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:16px 18px;
+  cursor:pointer;
+  user-select:none;
+  -webkit-tap-highlight-color: transparent;
+}.siWrap .panelHeader:focus-visible{
+  outline:none;
+  box-shadow: 0 0 0 3px rgba(21,255,200,.32);
+}.siWrap .titleBlock{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  min-width:0;
+}.siWrap .panelTitle{
+  font-size:15px;
+  font-weight:750;
+  letter-spacing:.2px;
+}.siWrap .panelSub{
+  font-size:12px;
+  color: var(--muted);
+  line-height:1.3;
+}.siWrap .chev{
+  width:34px;
+  height:34px;
+  border-radius:999px;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(209,254,255,.16);
+  background: rgba(0,0,0,.12);
+  transition: transform .18s ease, background .18s ease, border-color .18s ease;
+  flex: 0 0 auto;
+}.siWrap .panel.open .chev{
+  transform: rotate(180deg);
+  background: rgba(0,0,0,.18);
+  border-color: rgba(21,255,200,.24);
+}.siWrap /* Content area */
+.panelBody{
+  max-height:0;
+  opacity:0;
+  transform: translateY(-6px);
+  transition: max-height .28s ease, opacity .22s ease, transform .22s ease;
+}.siWrap .panel.open .panelBody{
+  max-height: 520px;
+  opacity:1;
+  transform: translateY(0);
+}.siWrap .inner{
+  padding: 0 18px 18px 18px;
+}.siWrap .note{
+  font-size:13px;
+  color: var(--muted);
+  margin: 6px 0 14px 0;
+  line-height:1.35;
+}.siWrap .pill{
+  display:inline-block;
+  padding:2px 8px;
+  border-radius:999px;
+  border:1px solid rgba(209,254,255,.18);
+  background:rgba(0,0,0,.18);
+  font-size:11px;
+  opacity:.92;
+  margin-left:8px;
+}.siWrap .spiralStage{
+  margin: 8px auto 10px auto;
+  width: 220px;
+  height: 220px;
+  border-radius: 18px;
+  border: 1px solid rgba(209,254,255,.14);
+  background: rgba(0,0,0,.12);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  user-select:none;
+  -webkit-tap-highlight-color: transparent;
+}.siWrap .spiralStage:focus-visible{
+  outline:none;
+  box-shadow: 0 0 0 3px rgba(21,255,200,.32);
+}.siWrap #spiral{
+  width: 190px;
+  height: 190px;
+  transform-origin: 50% 50%;
+  filter: drop-shadow(0 0 14px rgba(21,255,200,.12));
+}.siWrap .msg{
+  text-align:center;
+  font-size:14px;
+  line-height:1.45;
+  min-height: 44px;
+  margin-top: 6px;
+}.siWrap .actionsRow{
+  display:flex;
+  justify-content:center;
+  margin-top:12px;
+}.siWrap .linkBtn{
+  appearance:none;
+  border:none;
+  background:transparent;
+  color: rgba(209,254,255,.92);
+  font-weight:650;
+  font-size:13px;
+  cursor:pointer;
+  padding:8px 10px;
+  border-radius:999px;
+  transition: background .15s ease;
+}.siWrap .linkBtn:hover{
+  background: rgba(209,254,255,.08);
+}.siWrap .footer{
+  margin-top:10px;
+  font-size:12px;
+  opacity:.62;
+  text-align:center;
+}
+
+/* Reduced motion: keep transitions but avoid “extra” animations */
+
+@.siWrap media (prefers-reduced-motion: reduce){.siWrap .panelBody{ transition: max-height .01s linear, opacity .01s linear, transform .01s linear; }.siWrap .chev{ transition: transform .01s linear; }
+}
+
+
+/* ===== Brick Wall Reveal (Defensive) ===== */
+.bwWrap{ margin-top:14px; }
+.bwWrap .panel{
+  border-radius: var(--radius);
+  border:1px solid var(--border);
+  background: rgba(21,255,200,.06);
+  box-shadow: var(--shadow);
+  overflow:hidden;
+}
+.bwWrap .panelHeader{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; padding:16px 18px; cursor:pointer;
+  user-select:none; -webkit-tap-highlight-color: transparent;
+}
+.bwWrap .panelHeader:focus-visible{
+  outline:none; box-shadow: 0 0 0 3px rgba(21,255,200,.32);
+}
+.bwWrap .titleBlock{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+.bwWrap .panelTitle{ font-size:15px; font-weight:750; letter-spacing:.2px; }
+.bwWrap .panelSub{ font-size:12px; color: var(--muted); line-height:1.3; }
+.bwWrap .chev{
+  width:34px; height:34px; border-radius:999px;
+  display:grid; place-items:center;
+  border:1px solid rgba(209,254,255,.16);
+  background: rgba(0,0,0,.12);
+  transition: transform .18s ease, background .18s ease, border-color .18s ease;
+  flex: 0 0 auto;
+}
+.bwWrap .panel.open .chev{
+  transform: rotate(180deg); background: rgba(0,0,0,.18);
+  border-color: rgba(21,255,200,.24);
+}
+.bwWrap .panelBody{
+  max-height:0; opacity:0; transform: translateY(-6px);
+  transition: max-height .30s ease, opacity .24s ease, transform .24s ease;
+}
+.bwWrap .panel.open .panelBody{
+  max-height:640px; opacity:1; transform: translateY(0);
+}
+.bwWrap .inner{ padding: 0 16px 18px 16px; }
+.bwLayout{
+  display:grid; grid-template-columns: 1.25fr .75fr;
+  gap:12px; align-items:start; margin-top:12px;
+}
+@media (max-width:540px){ .bwLayout{ grid-template-columns: 1fr; } }
+.bwWall{
+  position:relative; width:100%; height:240px;
+  border-radius:14px; border:1px solid rgba(209,254,255,.14);
+  background:rgba(0,0,0,.22); overflow:hidden;
+}
+.bwMessage{
+  position:absolute; inset:0; display:flex;
+  align-items:center; justify-content:center;
+  padding:18px; text-align:center;
+  opacity: var(--bw-reveal, 0);
+  filter: blur(var(--bw-blur, 10px));
+  transition: opacity .18s ease, filter .18s ease;
+}
+.bwMessageInner{ max-width:360px; font-size:14px; line-height:1.45; }
+.bwMessageInner .small{
+  display:block; margin-top:10px; font-size:12px; color: var(--muted);
+}
+.bwBricks{
+  position:absolute; inset:0;
+  display:grid; grid-template-columns: repeat(3,1fr);
+  grid-template-rows: repeat(3,1fr);
+  gap:7px; padding:9px;
+}
+.bwBrick{
+  background: #7A3E2B; border-radius:7px; cursor:grab;
+  box-shadow: 0 6px 16px rgba(0,0,0,.35);
+  border:1px solid rgba(0,0,0,.18);
+  transition: background .2s, box-shadow .2s, transform .1s;
+}
+.bwBrick:active{ cursor:grabbing; transform:scale(1.04); }
+.bwBrick:hover{
+  background: #9E5238;
+  box-shadow: 0 0 0 2px rgba(21,255,200,.4), 0 6px 16px rgba(0,0,0,.35);
+}
+.bwPile{
+  border-radius:14px; border:1px dashed rgba(21,255,200,.45);
+  background: rgba(21,255,200,.08); padding:12px;
+  min-height:180px; display:flex; flex-direction:column; gap:8px;
+}
+.bwPileTitle{ font-weight:750; font-size:13px; }
+.bwPileHint{ font-size:11px; color: var(--muted); }
+.bwDropZone{
+  flex:1; border-radius:12px;
+  border:1px solid rgba(209,254,255,.14);
+  background: rgba(0,0,0,.16);
+  display:flex; align-items:center; justify-content:center;
+  text-align:center; padding:10px; font-size:11px; min-height:80px;
+  transition: box-shadow .15s, background .15s;
+}
+.bwDropZone.dragOver{
+  box-shadow: 0 0 0 3px rgba(21,255,200,.25);
+  background: rgba(21,255,200,.10);
+}
+.bwProgress{
+  font-size:11px; color: var(--muted);
+  display:flex; justify-content:space-between; margin-top:8px;
+}
+.bwFooter{ margin-top:10px; text-align:center; font-size:11px; opacity:.60; }
+@media (prefers-reduced-motion:reduce){
+  .bwBrick{ transition:none; }
+  .bwMessage{ transition:none; }
+  .bwWrap .panelBody{ transition: max-height .01s linear, opacity .01s linear, transform .01s linear; }
+}
+
+/* ===== Next Right Move (Guilt) ===== */
+.nrmWrap{
+  margin-top:14px;
+}
+.nrmWrap .panel{
+  border-radius: var(--radius);
+  border:1px solid var(--border);
+  background: rgba(21,255,200,.06);
+  box-shadow: var(--shadow);
+  overflow:hidden;
+}
+.nrmWrap .panelHeader{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; padding:16px 18px; cursor:pointer;
+  user-select:none; -webkit-tap-highlight-color: transparent;
+}
+.nrmWrap .panelHeader:focus-visible{
+  outline:none; box-shadow: 0 0 0 3px rgba(21,255,200,.32);
+}
+.nrmWrap .titleBlock{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+.nrmWrap .panelTitle{ font-size:15px; font-weight:750; letter-spacing:.2px; }
+.nrmWrap .panelSub{ font-size:12px; color: var(--muted); line-height:1.3; }
+.nrmWrap .chev{
+  width:34px; height:34px; border-radius:999px;
+  display:grid; place-items:center;
+  border:1px solid rgba(209,254,255,.16);
+  background: rgba(0,0,0,.12);
+  transition: transform .18s ease, background .18s ease, border-color .18s ease;
+  flex: 0 0 auto;
+}
+.nrmWrap .panel.open .chev{
+  transform: rotate(180deg); background: rgba(0,0,0,.18);
+  border-color: rgba(21,255,200,.24);
+}
+.nrmWrap .panelBody{
+  max-height:0; opacity:0; transform: translateY(-6px);
+  transition: max-height .30s ease, opacity .24s ease, transform .24s ease;
+}
+.nrmWrap .panel.open .panelBody{
+  max-height:700px; opacity:1; transform: translateY(0);
+}
+.nrmWrap .inner{ padding: 0 18px 18px 18px; }
+.nrmCard{
+  border:1px solid rgba(209,254,255,.14);
+  background: rgba(0,0,0,.16);
+  border-radius:16px;
+  padding:18px;
+  text-align:center;
+}
+.nrmPathWrap{
+  margin: 10px auto 14px auto;
+  padding: 14px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(209,254,255,.14);
+  background: rgba(0,0,0,.14);
+}
+.nrmPath{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  position:relative;
+  padding: 8px 6px;
+}
+.nrmLine{
+  position:absolute;
+  left:18px; right:18px; top:50%;
+  height:2px;
+  transform:translateY(-50%);
+  background: rgba(209,254,255,.14);
+  border-radius:999px;
+  overflow:hidden;
+}
+.nrmLineFill{
+  width:0%;
+  height:100%;
+  background: rgba(21,255,200,.65);
+  transition: width .25s ease;
+}
+.nrmNode{
+  width:34px; height:34px;
+  border-radius:999px;
+  border:1px solid rgba(209,254,255,.22);
+  background: rgba(0,0,0,.12);
+  display:grid; place-items:center;
+  z-index:1; position:relative;
+  transition: transform .12s ease, border-color .15s ease, background .15s ease;
+  flex-shrink:0;
+}
+.nrmNode span{ font-size:12px; font-weight:800; color: rgba(209,254,255,.78); }
+.nrmNode.active{
+  border-color: rgba(21,255,200,.55);
+  background: rgba(21,255,200,.10);
+  transform: translateY(-1px);
+}
+.nrmNode.done{
+  border-color: rgba(21,255,200,.60);
+  background: rgba(21,255,200,.14);
+}
+.nrmNode.done span{ color: rgba(209,254,255,.94); }
+.nrmMoveBox{
+  border:1px solid rgba(209,254,255,.14);
+  background: rgba(0,0,0,.16);
+  border-radius:14px;
+  padding:16px;
+  margin: 0 auto 12px auto;
+  min-height:130px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:8px;
+  text-align:left;
+}
+.nrmLabelRow{
+  display:flex; justify-content:space-between; gap:10px;
+  align-items:center; flex-wrap:wrap;
+}
+.nrmLabel{ font-size:12px; color: rgba(209,254,255,.70); letter-spacing:.2px; text-transform:uppercase; }
+.nrmBadge{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:4px 10px; border-radius:999px;
+  border:1px solid rgba(209,254,255,.16);
+  background: rgba(0,0,0,.14);
+  font-size:12px; color: rgba(209,254,255,.82);
+}
+.nrmBadgeDot{ width:8px; height:8px; border-radius:999px; background: rgba(21,255,200,.75); }
+.nrmMove{ font-size:19px; font-weight:900; letter-spacing:.2px; }
+.nrmDesc{ font-size:13px; color: rgba(209,254,255,.88); line-height:1.45; }
+.nrmChallenge{
+  margin-top:8px; padding:10px 12px; border-radius:12px;
+  border:1px solid rgba(21,255,200,.26);
+  background: rgba(21,255,200,.08);
+}
+.nrmChallengeTitle{ font-size:11px; font-weight:900; letter-spacing:.2px; text-transform:uppercase; color: rgba(209,254,255,.86); margin-bottom:4px; }
+.nrmChallengeText{ font-size:12px; color: rgba(209,254,255,.88); line-height:1.4; }
+.nrmControls{
+  display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:10px;
+}
+.nrmBtn{
+  appearance:none;
+  border:1px solid rgba(21,255,200,.38);
+  background: rgba(21,255,200,.12);
+  color: var(--sb-light);
+  border-radius: 999px;
+  padding: 10px 14px;
+  cursor:pointer;
+  font-weight:850;
+  font-size:13px;
+  letter-spacing:.2px;
+  transition: transform .06s ease, background .15s ease, border-color .15s ease;
+}
+.nrmBtn:hover{ background: rgba(21,255,200,.18); border-color: rgba(21,255,200,.52); }
+.nrmBtn:active{ transform: translateY(1px); }
+.nrmBtnGhost{
+  border-color: rgba(209,254,255,.22);
+  background: rgba(209,254,255,.06);
+  font-weight:750;
+}
+.nrmBtnGhost:hover{ background: rgba(209,254,255,.09); border-color: rgba(209,254,255,.30); }
+.nrmStamp{
+  display:inline-block;
+  padding:5px 10px;
+  border-radius:10px;
+  border:1px solid rgba(21,255,200,.28);
+  background: rgba(21,255,200,.10);
+  color: rgba(209,254,255,.92);
+  font-weight:900;
+  font-size:11px;
+  letter-spacing:.3px;
+  opacity:0;
+  transform: translateY(4px);
+  pointer-events:none;
+  transition: opacity .18s ease, transform .18s ease;
+  margin-top:6px;
+}
+.nrmStamp.show{ opacity:1; transform: translateY(0); }
+.nrmSectionTitle{
+  font-size:13px; font-weight:900; color: rgba(209,254,255,.92);
+  margin-bottom:6px; letter-spacing:.2px; text-transform:uppercase;
+}
+@media (prefers-reduced-motion:reduce){
+  .nrmBtn,.nrmNode,.nrmLineFill,.nrmStamp{ transition:none !important; }
+  .nrmWrap .panelBody{ transition: max-height .01s linear, opacity .01s linear, transform .01s linear; }
+  .nrmWrap .chev{ transition: transform .01s linear; }
+}
+
+/* ===== Repair Page — collapsible panels ===== */
+.repairWrap{ margin-top:12px; display:flex; flex-direction:column; gap:10px; }
+
+.repairPanel{
+  border-radius:var(--radius);
+  border:1px solid var(--border);
+  background: rgba(21,255,200,.06);
+  box-shadow: var(--shadow);
+  overflow:hidden;
+}
+.repairPanel .panelHeader{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; padding:16px 18px; cursor:pointer;
+  user-select:none; -webkit-tap-highlight-color: transparent;
+}
+.repairPanel .panelHeader:focus-visible{
+  outline:none; box-shadow:0 0 0 3px rgba(21,255,200,.32);
+}
+.repairPanel .titleBlock{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+.repairPanel .panelTitle{ font-size:15px; font-weight:750; letter-spacing:.2px; }
+.repairPanel .panelSub{ font-size:12px; color:var(--muted); line-height:1.3; }
+.repairPanel .chev{
+  width:34px; height:34px; border-radius:999px;
+  display:grid; place-items:center;
+  border:1px solid rgba(209,254,255,.16);
+  background:rgba(0,0,0,.12);
+  transition: transform .18s ease, background .18s ease, border-color .18s ease;
+  flex:0 0 auto;
+}
+.repairPanel.open .chev{
+  transform:rotate(180deg); background:rgba(0,0,0,.18);
+  border-color:rgba(21,255,200,.24);
+}
+.repairPanel .panelBody{
+  max-height:0; opacity:0; transform:translateY(-6px);
+  transition: max-height .30s ease, opacity .24s ease, transform .24s ease;
+}
+.repairPanel.open .panelBody{
+  max-height:900px; opacity:1; transform:translateY(0);
+}
+.repairPanel .inner{ padding:0 18px 18px 18px; }
+@media (prefers-reduced-motion:reduce){
+  .repairPanel .panelBody{ transition:max-height .01s linear, opacity .01s linear, transform .01s linear; }
+  .repairPanel .chev{ transition:transform .01s linear; }
+}
+
+.rbWarning{
+  background:rgba(255,80,80,.08);
+  border:1px solid rgba(255,80,80,.28);
+  padding:10px 12px; border-radius:12px;
+  font-size:13px; margin-bottom:14px; line-height:1.4;
+  color:var(--muted);
+}
+.rbSection{ margin-bottom:14px; }
+.rbLabel{
+  font-size:11px; text-transform:uppercase; letter-spacing:.3px;
+  color:var(--muted); margin-bottom:5px;
+}
+.rbTextarea{
+  width:100%; min-height:64px;
+  border-radius:10px;
+  border:1px solid rgba(209,254,255,.18);
+  background:rgba(0,0,0,.22);
+  color:var(--sb-light);
+  padding:10px; font-size:13px;
+  resize:vertical;
+  font-family:inherit;
+}
+.rbTextarea:focus{ outline:none; border-color:var(--sb-mint); }
+.rbFlag{ color:#ff8080; font-size:12px; margin-top:5px; display:none; }
+.rbOutput{
+  margin-top:12px; padding:14px;
+  border-radius:12px;
+  background:rgba(0,0,0,.28);
+  border:1px solid rgba(209,254,255,.18);
+  font-size:13px; white-space:pre-line;
+  line-height:1.55; display:none; color:var(--sb-light);
+}
+.rbBtnRow{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+.rbBtn{
+  appearance:none;
+  border-radius:999px; padding:9px 14px;
+  font-size:13px; font-weight:800; cursor:pointer;
+  border:1px solid rgba(21,255,200,.38);
+  background:rgba(21,255,200,.12);
+  color:var(--sb-light);
+  transition: background .15s ease;
+}
+.rbBtn:hover{ background:rgba(21,255,200,.20); }
+.rbBtnGhost{
+  border-color:rgba(209,254,255,.22);
+  background:rgba(209,254,255,.06);
+}
+.rbBtnGhost:hover{ background:rgba(209,254,255,.10); }
+.rbCopyConfirm{
+  font-size:12px; color:var(--sb-mint); opacity:0;
+  transition:opacity .3s ease; margin-top:6px;
+}
+.rbCopyConfirm.show{ opacity:1; }
+
+/* ===== Ongoing Consent Road (Relationship) ===== */
+.ocWrap{
+  margin-top: 10px;
+}
+.ocTopCopy{
+  border: 1px solid rgba(209,254,255,.14);
+  background: rgba(0,0,0,.14);
+  border-radius: 16px;
+  padding: 14px 14px;
+  margin: 10px 0 14px 0;
+}
+.ocTopCopy p{
+  margin: 0 0 10px 0;
+  line-height: 1.5;
+  font-size: 14px;
+  color: rgba(209,254,255,.92);
+}
+.ocTopCopy p:last-child{ margin-bottom:0; }
+.ocTopCopy b{ color: rgba(209,254,255,.98); }
+
+.ocLayout{
+  display:grid;
+  grid-template-columns: 1fr 320px;
+  gap: 14px;
+  align-items:start;
+}
+@media (max-width: 900px){
+  .ocLayout{ grid-template-columns: 1fr; }
+}
+
+.ocRoadWrap{
+  position:relative;
+  border-radius: 18px;
+  border: 1px solid rgba(209,254,255,.14);
+  background: rgba(0,0,0,.14);
+  padding: 12px;
+  height: 540px;
+  overflow:auto;
+}
+
+.ocRoadInner{
+  position:relative;
+  min-height: 520px;
+  padding: 28px 14px 36px 14px;
+}
+
+.ocRoad{
+  position:absolute;
+  left: 50%;
+  top: 14px;
+  bottom: 14px;
+  width: 92px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(209,254,255,.10), rgba(0,0,0,.18));
+  border: 1px solid rgba(209,254,255,.12);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.18);
+}
+.ocRoad::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top: 18px;
+  bottom: 18px;
+  width: 2px;
+  transform: translateX(-50%);
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(21,255,200,.75) 0px,
+    rgba(21,255,200,.75) 14px,
+    transparent 14px,
+    transparent 26px
+  );
+  opacity:.65;
+  border-radius: 2px;
+}
+
+.ocMile{
+  position:absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+}
+
+.ocPin{
+  position:absolute;
+  left: 50%;
+  top: 0;
+  transform: translate(-50%, -50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: rgba(21,255,200,.90);
+  box-shadow: 0 0 0 6px rgba(21,255,200,.16), 0 12px 26px rgba(0,0,0,.40);
+}
+
+.ocBubble{
+  position:absolute;
+  max-width: 280px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(21,255,200,.34);
+  background: rgba(21,255,200,.10);
+  color: rgba(209,254,255,.96);
+  font-size: 13px;
+  line-height: 1.35;
+  box-shadow: 0 14px 30px rgba(0,0,0,.35);
+  opacity: 0;
+  transform: translateY(10px) scale(.98);
+  transition: opacity .22s ease, transform .22s ease;
+}
+.ocBubble.show{ opacity:1; transform: translateY(0) scale(1); }
+.ocBubble::after{
+  content:"";
+  position:absolute;
+  top: 16px;
+  width: 10px;
+  height: 10px;
+  background: rgba(21,255,200,.10);
+  border-left: 1px solid rgba(21,255,200,.34);
+  border-bottom: 1px solid rgba(21,255,200,.34);
+  transform: rotate(45deg);
+}
+.ocBubble.left{ right: 86px; }
+.ocBubble.left::after{ right: -6px; }
+.ocBubble.right{ left: 86px; }
+.ocBubble.right::after{ left: -6px; }
+
+.ocSide{
+  border-radius: 18px;
+  border: 1px solid rgba(209,254,255,.14);
+  background: rgba(0,0,0,.14);
+  padding: 16px;
+}
+.ocSide h2{
+  margin:0 0 8px 0;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing:.2px;
+}
+.ocSide p{
+  margin:0 0 10px 0;
+  color: rgba(209,254,255,.90);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.ocControls{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top: 12px;
+}
+.ocBtn{
+  appearance:none;
+  border-radius:999px;
+  padding:10px 14px;
+  cursor:pointer;
+  font-size:13px;
+  font-weight: 900;
+  letter-spacing:.2px;
+  border: 1px solid rgba(21,255,200,.40);
+  background: rgba(21,255,200,.12);
+  color: var(--sb-light);
+  transition: transform .06s ease, background .15s ease, border-color .15s ease;
+}
+.ocBtn:hover{ background: rgba(21,255,200,.16); border-color: rgba(21,255,200,.55); }
+.ocBtn:active{ transform: translateY(1px); }
+
+.ocBtnGhost{
+  border-color: rgba(209,254,255,.22);
+  background: rgba(209,254,255,.06);
+  font-weight: 800;
+}
+.ocBtnGhost:hover{ background: rgba(209,254,255,.09); border-color: rgba(209,254,255,.30); }
+
+.ocMeter{
+  margin-top: 10px;
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.ocEndNote{
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(209,254,255,.14);
+  background: rgba(0,0,0,.12);
+  color: rgba(209,254,255,.90);
+  font-size: 13px;
+  line-height: 1.45;
+  display:none;
+}
+@media (prefers-reduced-motion: reduce){
+  .ocBubble, .ocBubble.show{ transition:none; }
+}
+
+/* ===== Anger Pressure Meter ===== */
+.pressureWrap{
+  margin: 12px 0 14px;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+}
+.pressureTop{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+}
+.pressureLabel{
+  font-weight: 950;
+  font-size: 13px;
+  letter-spacing: .2px;
+}
+.pressureValue{
+  font-weight: 950;
+  font-size: 12px;
+  color: var(--sb-light);
+  opacity:.92;
+  border: 1px solid rgba(255,255,255,.14);
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(0,0,0,.18);
+  white-space: nowrap;
+}
+.pressureBar{
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.10);
+  overflow:hidden;
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.14);
+}
+.pressureFill{
+  height:100%;
+  width:50%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(21,255,200,.85), rgba(255,97,79,.85));
+  transition: width .15s ease;
+}
+.pressureSlider{
+  width:100%;
+  margin: 12px 0 6px;
+}
+.pressureTicks{
+  position: relative;
+  height: 18px;
+  font-size: 11px;
+  color: var(--muted);
+  opacity:.95;
+}
+.pressureTicks span{
+  position: absolute;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.pressureCopy{
+  margin-top:10px;
+  font-size: 13px;
+  line-height:1.35;
+  color: var(--muted);
+}
+.pressurePrompt{
+  margin-top:10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(21,255,200,.22);
+  background: rgba(21,255,200,.08);
+  color: var(--sb-light);
+  font-size: 13px;
+  line-height:1.35;
+}
+.pressurePrompt b{ color: var(--sb-light); }
+
+</style>
+
+<style>
+/* ===== Ongoing Consent Road — Single consolidated layout ===== */
+
+/* Always single-column: road on top, controls below */
+.ocLayout {
+  grid-template-columns: 1fr !important;
+  gap: 16px;
+}
+
+/* Road scroll container */
+.ocRoadWrap {
+  height: 300px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  padding: 14px 14px 6px !important;
+  border-radius: 18px;
+  border: 1px solid rgba(209,254,255,.16);
+  background: rgba(0,0,0,.18);
+  scroll-behavior: smooth;
+  position: relative;
+}
+.ocRoadWrap::-webkit-scrollbar { height: 8px; }
+.ocRoadWrap::-webkit-scrollbar-thumb {
+  background: rgba(209,254,255,.22);
+  border-radius: 999px;
+}
+.ocRoadWrap::-webkit-scrollbar-track {
+  background: rgba(0,0,0,.12);
+  border-radius: 999px;
+}
+
+/* Inner canvas — width set by JS */
+.ocRoadInner {
+  position: relative !important;
+  height: 272px !important;
+  min-height: 272px !important;
+  padding: 0 !important;
+}
+
+/* Horizontal road band */
+.ocRoad {
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+  top: 50% !important;
+  bottom: auto !important;
+  width: auto !important;
+  height: 88px !important;
+  transform: translateY(-50%) !important;
+  border-radius: 8px !important;
+  background: linear-gradient(180deg,
+    rgba(209,254,255,.07) 0%,
+    rgba(0,0,0,.22) 50%,
+    rgba(209,254,255,.04) 100%) !important;
+  border-top: 1px solid rgba(209,254,255,.14) !important;
+  border-bottom: 1px solid rgba(209,254,255,.14) !important;
+  border-left: none !important;
+  border-right: none !important;
+  box-shadow: none !important;
+}
+
+/* Dashed center divider line */
+.ocRoad::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 3px;
+  transform: translateY(-50%);
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(21,255,200,.50) 0,
+    rgba(21,255,200,.50) 12px,
+    transparent 12px,
+    transparent 22px
+  );
+  opacity: .70;
+  border-radius: 2px;
+}
+
+/* Mile markers: positioned at (x, vertical center) via JS */
+.ocMile {
+  position: absolute !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 0;
+  height: 0;
+}
+
+/* Checkpoint dot — glowing mint circle */
+.ocPin {
+  display: block !important;
+  position: absolute;
+  top: 0 !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: rgba(21,255,200,.92);
+  box-shadow: 0 0 0 5px rgba(21,255,200,.18), 0 0 14px rgba(21,255,200,.35);
+  z-index: 3;
+}
+
+/* Bubble cards alternating above/below */
+.ocBubble {
+  position: absolute;
+  max-width: 160px;
+  min-width: 120px;
+  width: max-content;
+  padding: 8px 11px;
+  border-radius: 12px;
+  border: 1px solid rgba(21,255,200,.32);
+  background: linear-gradient(135deg, rgba(21,255,200,.12), rgba(19,132,143,.08));
+  color: rgba(209,254,255,.96);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,.30);
+  /* centered on the pin */
+  left: 50% !important;
+  right: auto !important;
+  transform: translate(-50%, 0) !important;
+  opacity: 0;
+  transition: opacity .28s ease, transform .28s ease;
+  z-index: 4;
+}
+.ocBubble::after { display: none !important; content: none !important; }
+
+/* Top bubble: sits above the road */
+.ocBubble.top {
+  bottom: 58px !important;
+  top: auto !important;
+  transform: translate(-50%, 0) !important;
+}
+/* Bottom bubble: sits below the road */
+.ocBubble.bottom {
+  top: 58px !important;
+  bottom: auto !important;
+  transform: translate(-50%, 0) !important;
+}
+
+/* Show state */
+.ocBubble.show {
+  opacity: 1 !important;
+}
+
+/* Growing progress line inside road */
+#ocProgressLine {
+  position: absolute;
+  top: 50%;
+  left: 80px; /* = PADDING, aligns with first checkpoint dot */
+  height: 4px;
+  width: 0;
+  background: linear-gradient(90deg, rgba(21,255,200,.85), rgba(21,255,200,.35));
+  border-radius: 4px;
+  transform: translateY(-50%);
+  transition: width 380ms cubic-bezier(.4,0,.2,1);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Controls panel */
+.ocSide {
+  width: 100% !important;
+  margin-top: 0 !important;
+  border-radius: 16px;
+  padding: 16px;
+  background: rgba(0,0,0,.14);
+  border: 1px solid rgba(209,254,255,.12);
+}
+.ocSide h2 {
+  margin: 0 0 6px 0;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: .2px;
+}
+.ocSide p {
+  margin: 0 0 12px 0;
+  color: rgba(209,254,255,.85);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.ocControls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 0;
+}
+.ocMeter {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* ===== Prevent Page — tool hub ===== */
+.pvGrid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:10px;
+  margin:14px 0 18px;
+}
+@media(max-width:480px){ .pvGrid{ grid-template-columns:1fr; } }
+.pvBtn{
+  appearance:none;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:4px;
+  padding:16px;
+  border-radius:16px;
+  border:1px solid rgba(209,254,255,.18);
+  background:rgba(21,255,200,.06);
+  color:var(--sb-light);
+  cursor:pointer;
+  text-align:left;
+  transition: background .15s ease, border-color .15s ease, transform .08s ease, box-shadow .15s ease;
+}
+.pvBtn:hover{
+  background:rgba(21,255,200,.13);
+  border-color:rgba(21,255,200,.45);
+  box-shadow:0 0 12px rgba(21,255,200,.18);
+  transform:translateY(-1px);
+}
+.pvBtn:active{ transform:translateY(0); }
+.pvIcon{ font-size:24px; line-height:1; margin-bottom:2px; }
+.pvLabel{ font-size:14px; font-weight:850; letter-spacing:.1px; }
+.pvSub{ font-size:12px; color:var(--muted); line-height:1.3; }
+
+/* ===== Supporting a Survivor modal ===== */
+.ssGrid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+@media(max-width:480px){ .ssGrid{ grid-template-columns:1fr; } }
+.ssCol{ border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:8px; }
+.ssColDo{ background:rgba(21,255,200,.07); border:1px solid rgba(21,255,200,.25); }
+.ssColDont{ background:rgba(255,80,80,.06); border:1px solid rgba(255,80,80,.22); }
+.ssColHead{ font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:.3px; margin-bottom:2px; }
+.ssColDo .ssColHead{ color:var(--sb-mint); }
+.ssColDont .ssColHead{ color:#ff8080; }
+.ssItem{ font-size:13px; color:var(--muted); line-height:1.4; padding:7px 9px; border-radius:8px; background:rgba(0,0,0,.14); }
+
+/* ===== Shift the Culture accordion ===== */
+.scAccordion{ display:flex; flex-direction:column; gap:6px; }
+.scItem{ border-radius:12px; border:1px solid rgba(209,254,255,.14); background:rgba(0,0,0,.14); overflow:hidden; }
+.scHeader{ width:100%; appearance:none; background:transparent; border:none; display:flex; align-items:center; gap:10px; padding:12px 14px; cursor:pointer; color:var(--sb-light); text-align:left; }
+.scHeader:hover{ background:rgba(21,255,200,.06); }
+.scHeader.scOpen{ background:rgba(21,255,200,.08); }
+.scEmoji{ font-size:18px; flex-shrink:0; }
+.scTitle{ flex:1; font-size:14px; font-weight:800; }
+.scChev{ flex-shrink:0; transition:transform .18s ease; opacity:.7; }
+.scHeader.scOpen .scChev{ transform:rotate(180deg); }
+.scBody{ max-height:0; overflow:hidden; font-size:13px; color:var(--muted); line-height:1.5; transition:max-height .25s ease, padding .25s ease; padding:0 14px; }
+.scBody.scOpen{ max-height:160px; padding:0 14px 12px 42px; }
+
+/* ===== Bystander Intervention cards ===== */
+.biCards{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+@media(max-width:480px){ .biCards{ grid-template-columns:1fr; } }
+.biCard{ border-radius:14px; border:1px solid rgba(209,254,255,.14); background:rgba(0,0,0,.18); padding:14px; }
+.biNum{ font-size:11px; font-weight:900; color:var(--sb-mint); letter-spacing:.4px; margin-bottom:4px; }
+.biTitle{ font-size:15px; font-weight:900; margin-bottom:6px; }
+.biBody{ font-size:13px; color:var(--muted); line-height:1.45; }
+
+/* Allow taller modals for prevent tools */
+.modal{ max-height:88vh; overflow-y:auto; }
+
+/* ===== Bystander modal additions ===== */
+.biSectionHead{
+  font-size:13px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.4px;
+  color:var(--sb-mint);
+  margin-bottom:8px;
+}
+.biNum{
+  font-size:12px;
+  font-weight:900;
+  color:var(--sb-mint);
+  letter-spacing:.3px;
+  margin-bottom:5px;
+  text-transform:uppercase;
+}
+.biBarriers{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  margin-bottom:4px;
+}
+@media(max-width:480px){ .biBarriers{ grid-template-columns:1fr; } }
+.biBarrier{
+  font-size:12px;
+  color:var(--muted);
+  padding:8px 10px;
+  border-radius:8px;
+  border:1px solid rgba(255,120,120,.2);
+  background:rgba(255,80,80,.05);
+  font-style:italic;
+}
+.biBaeCode{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+}
+.biBaeItem{
+  font-size:13px;
+  color:var(--muted);
+  padding:8px 12px;
+  border-radius:8px;
+  border:1px solid rgba(209,254,255,.12);
+  background:rgba(21,255,200,.05);
+  position:relative;
+  padding-left:24px;
+}
+.biBaeItem::before{
+  content:'✓';
+  position:absolute;
+  left:8px;
+  color:var(--sb-mint);
+  font-weight:900;
+  font-size:11px;
+}
+
+/* ===== Belief Shift =====*/
+.bsColLabels{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.bsColLabel{padding:7px 12px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:7px;}
+.bsColLabel-reactive{background:rgba(255,100,100,.08);border:1px solid rgba(255,100,100,.22);color:rgba(255,160,160,.9);}
+.bsColLabel-account{background:rgba(21,255,200,.08);border:1px solid rgba(21,255,200,.22);color:var(--sb-mint);justify-content:flex-end;}
+.bsColDot{width:7px;height:7px;border-radius:999px;flex-shrink:0;}
+.bsColLabel-reactive .bsColDot{background:rgba(255,120,120,.8);}
+.bsColLabel-account .bsColDot{background:var(--sb-mint);box-shadow:0 0 0 3px rgba(21,255,200,.2);}
+.bsStack{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.bsCard{position:relative;border-radius:14px;overflow:hidden;border:1px solid rgba(209,254,255,.16);box-shadow:0 10px 28px rgba(0,0,0,.38);user-select:none;-webkit-user-select:none;height:88px;}
+.bsCard:focus-within{outline:2px solid var(--sb-mint);outline-offset:2px;}
+.bsSide{position:absolute;inset:0;display:flex;align-items:center;padding:0 18px;}
+.bsSideLeft{background:linear-gradient(110deg,rgba(30,18,18,.97) 0%,rgba(40,25,25,.93) 100%);}
+.bsSideRight{background:linear-gradient(110deg,#0e2d28 0%,#0f3732 100%);}
+.bsSideText{font-size:13px;font-weight:800;line-height:1.3;color:rgba(255,200,200,.88);padding-left:16px;padding-right:32px;}
+.bsReframeText{font-size:13px;font-weight:800;line-height:1.3;color:rgba(209,254,255,.95);padding-left:16px;padding-right:32px;}
+.bsRevealMask{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
+.bsRevealInner{position:absolute;inset:0;}
+.bsHandleTrack{position:absolute;top:0;bottom:0;width:0;pointer-events:none;}
+.bsDividerLine{position:absolute;top:0;bottom:0;left:0;width:2px;transform:translateX(-50%);background:linear-gradient(to bottom,transparent,var(--sb-mint) 30%,var(--sb-mint) 70%,transparent);opacity:.8;}
+.bsKnob{position:absolute;top:50%;left:0;transform:translate(-50%,-50%);width:36px;height:36px;border-radius:999px;background:rgba(20,50,55,.97);border:1.5px solid rgba(21,255,200,.5);box-shadow:0 0 0 5px rgba(21,255,200,.08),0 6px 18px rgba(0,0,0,.5);display:grid;place-items:center;pointer-events:auto;cursor:ew-resize;touch-action:none;transition:box-shadow .15s ease,border-color .15s ease;}
+.bsKnob:hover,.bsKnob.bsDragging{border-color:rgba(21,255,200,.9);box-shadow:0 0 0 7px rgba(21,255,200,.14),0 6px 18px rgba(0,0,0,.5);}
+.bsCardNum{position:absolute;top:7px;left:10px;font-size:9px;font-weight:800;letter-spacing:.1em;color:rgba(255,160,160,.35);pointer-events:none;}
+.bsHint{text-align:center;font-size:11px;color:rgba(209,254,255,.3);letter-spacing:.04em;margin-bottom:14px;}
+</style>
+
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">
+          <svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
+            <!-- Stem -->
+            <line x1="50" y1="64" x2="50" y2="130" stroke="#15FFC8" stroke-width="6" stroke-linecap="round" />
+            <!-- Center -->
+            <circle cx="50" cy="50" r="14" fill="#15FFC8" />
+            <!-- Petals -->
+            <g fill="#D1FEFF">
+              <ellipse cx="50" cy="20" rx="10" ry="18"/>
+              <ellipse cx="50" cy="80" rx="10" ry="18"/>
+              <ellipse cx="20" cy="50" rx="18" ry="10"/>
+              <ellipse cx="80" cy="50" rx="18" ry="10"/>
+              <ellipse cx="30" cy="30" rx="12" ry="18" transform="rotate(-45 30 30)"/>
+              <ellipse cx="70" cy="30" rx="12" ry="18" transform="rotate(45 70 30)"/>
+              <ellipse cx="30" cy="70" rx="12" ry="18" transform="rotate(45 30 70)"/>
+              <ellipse cx="70" cy="70" rx="12" ry="18" transform="rotate(-45 70 70)"/>
+            </g>
+          </svg>
+        </div>
+        <div class="title"><span class="neon-underline">BAE Check</span></div>
+        <div class="subtitle">Reflection & Accountability</div>
+      </div>
+      <div class="topActions">
+        <button class="btn btnSmall btnDanger" data-action="quickExit">Quick exit</button>
+        <button class="btn btnSmall" data-action="restart">Restart</button>
+      </div>
+    </div>
+
+    <div class="card" id="screen"></div>
+
+    <div class="footer">
+      <div>No Account. No Names. No Judgment. Just Unfiltered Answers.</div>
+      <div><a class="link" href="#" data-action="about">About</a></div>
+    </div>
+
+    <div style="text-align:center; margin-top:14px; font-size:12px; color: var(--muted);">
+      A Project of SafeBAE
+    </div>
+<div style="text-align:center; margin-top:18px;">
+  <img 
+    src="safebae-logo.png"
+    alt="SafeBAE Logo"
+    style="
+      max-width: 280px;
+      width: 80%;
+      height: auto;
+      opacity: 0.9;
+    "
+  />
+</div>
+
+  </div>
+  </div>
+
+<script>
+
+const state = { entry:null, scenario:null, emotion:null, path:null, screenId:"landing", showWhyModal: true, history:[] };
+const screen = document.getElementById("screen");
+
+function go(id){ if(state.screenId !== id) state.history.push(state.screenId); state.screenId=id; render(); }
+function goBack(){ if(state.history.length){ state.screenId=state.history.pop(); render(); } }
+function reset(){ state.entry=null; state.scenario=null; state.emotion=null; state.path=null; state.history=[]; go("landing"); }
+
+document.addEventListener("click", (e)=>{
+  const el = e.target.closest("[data-action]");
+  if(!el) return;
+  e.preventDefault();
+  const a = el.getAttribute("data-action");
+  actions[a]?.();
+});
+
+const actions = {
+  start: ()=>go("bringsYouHere"),
+  whyBtn: ()=>go("whyThisExists"),
+  pathMenu: ()=>go("pathMenu"),
+  about: ()=>go("about"),
+  restart: ()=>reset(),
+  quickExit: ()=>window.location.replace("https://www.google.com/search?q="),
+  goBack: ()=>goBack(),
+
+  // Repair page: "What if they don't forgive me?" explainer
+  openForgiveModal: ()=>openModal(
+    "What If They Don’t Forgive Me?",
+    `
+      <div class="p" style="margin:0 0 10px; color: var(--muted);">
+        They might not — and that can hurt. But forgiveness isn’t something you’re owed, and it isn’t proof that you “did accountability right.”
+      </div>
+
+      <div class="p" style="margin:0 0 10px; color: var(--muted);">
+        A solid repair attempt is about <b>responsibility</b> and <b>respecting boundaries</b>, not getting emotional relief.
+      </div>
+
+      <div class="note" style="margin:10px 0 0;">
+        <b>What accountability looks like either way:</b><br>
+        • Accept their response — including no response.<br>
+        • Don’t argue, minimize, or ask them to reassure you.<br>
+        • Change your behavior even if you never get closure.<br>
+        • Give space, and don’t keep “checking in” to see if they’re over it.
+      </div>
+
+      <div class="mutedBox" style="margin-top:10px;">
+        <b>Reality check:</b> You can’t control whether someone forgives you. You <i>can</i> control whether you repeat harm.
+      </div>
+    `
+  ),
+  closeModal: ()=>closeModal(),
+};
+
+
+// --- Simple modal helpers (uses existing .modalOverlay/.modal CSS) ---
+let __modalEl = null;
+
+function openModal(title, innerHtml){
+  closeModal(); // ensure one at a time
+  const wrap = document.createElement("div");
+  wrap.className = "modalOverlay";
+  wrap.setAttribute("role","dialog");
+  wrap.setAttribute("aria-modal","true");
+  wrap.innerHTML = `
+    <div class="modal">
+      <div class="modalHeader">
+        <div class="modalTitle">${title}</div>
+        <button class="btn btnSmall modalClose" data-action="closeModal" aria-label="Close">Close</button>
+      </div>
+      <div>${innerHtml}</div>
+      <div class="modalActions">
+        <button class="btn btnPrimary" data-action="closeModal">Done</button>
+      </div>
+    </div>
+  `;
+  // click outside closes
+  wrap.addEventListener("click", (e)=>{
+    if(e.target === wrap) closeModal();
+  });
+  document.body.appendChild(wrap);
+  __modalEl = wrap;
+}
+
+function closeModal(){
+  if(__modalEl){
+    __modalEl.remove();
+    __modalEl = null;
+  }
+}
+
+// ESC closes
+window.addEventListener("keydown", (e)=>{
+  if(e.key === "Escape") closeModal();
+});
+
+function backBtn(){ return state.history.length ? `<button class="btn btnBack" data-action="goBack">&#8592; Back</button>` : ""; }
+
+function card(h1, ps=[], note=null, content=""){
+  return `
+    <div class="h1">${h1}</div>
+    ${ps.map(p=>`<div class="p">${p}</div>`).join("")}
+    ${note?`<div class="note">${note}</div>`:""}
+    ${content}
+  `;
+}
+function btn(label, action, cls="btn"){ return `<button class="${cls}" data-action="${action}">${label}</button>`; }
+function btnIcon(label, action, icon, cls="btn"){
+  return `<button class="${cls}" data-action="${action}">
+    <span class="btnContent">
+      <span class="btnIcon" aria-hidden="true">${icon}</span>
+      <span class="btnLabel">${label}</span>
+    </span>
+  </button>`;
+}
+function grid(inner){ return `<div class="grid">${inner}</div>`; }
+
+
+function breatheWidget(){
+  return `
+<div class="breatheWrap" role="img" aria-label="Breathing guide: breathe in as it grows, breathe out as it shrinks">
+  <svg class="breathe" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+
+    <!-- Outer halo (very subtle) -->
+    <g class="breatheHalo">
+      <circle cx="100" cy="100" r="82" fill="none" stroke="rgba(209,254,255,.35)" stroke-width="2"/>
+    </g>
+
+    <!-- Middle ring (tracks breath) -->
+    <g class="breatheRing">
+      <circle cx="100" cy="100" r="68" fill="none" stroke="rgba(21,255,200,.55)" stroke-width="3"/>
+    </g>
+
+    <!-- Core (tracks breath) -->
+    <g class="breatheCore">
+      <circle cx="100" cy="100" r="54" fill="rgba(21,255,200,.22)" stroke="rgba(21,255,200,.92)" stroke-width="3"/>
+    </g>
+
+  </svg>
+</div>
+  `;
+}
+
+function catRunnerMarkup(){
+  return `
+    <div class="note">
+      <b>Reset break:</b> play for 20–30 seconds, then come back to your next step.<br>
+      <span style="font-size:12px; color: var(--muted);">
+      </span>
+    </div>
+
+    <div style="
+      border:1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
+    ">
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+        <div style="border:1px solid var(--border); border-radius:999px; padding:6px 10px; font-weight:900; font-size:12px;">
+          Score: <span id="cr_score" style="color:var(--sb-mint)">0</span>
+        </div>
+        <div style="border:1px solid var(--border); border-radius:999px; padding:6px 10px; font-weight:900; font-size:12px;">
+          Speed: <span id="cr_speed" style="color:var(--sb-mint)">1.0</span>x
+        </div>
+        <button class="btn btnSmall" type="button" id="cr_restart" style="margin-left:auto;">Restart</button>
+      </div>
+
+      <canvas id="cr_game" width="900" height="260"
+        style="
+          width:100%;
+          height:auto;
+          border-radius: 14px;
+          border: 1px solid var(--border);
+          background: rgba(0,0,0,.18);
+          touch-action: manipulation;
+          display:block;
+        "
+        aria-label="Runner game"
+      ></canvas>
+
+      <div style="margin-top:10px; font-size:12px; color: var(--muted); line-height:1.35;">
+        Controls: <b>Space</b>/<b>↑</b> jump • <b>↓</b> fast-drop • tap to jump on mobile • <b>R</b> restart
+      </div>
+    </div>
+  `;
+}
+
+
+function fogFeature(){
+  return `
+    <div style="position:relative;">
+      <div id="fogMount"></div>
+
+      <div class="h1">Confused / Unsure</div>
+      <div class="p">Give it a second. Let the fog clear.</div>
+
+      <ul style="
+        margin: 10px 0 14px 18px;
+        line-height:1.55;
+        color: rgba(209,254,255,.92);
+        font-size:14px;
+      ">
+        <li>Confusion usually means something important wasn’t clear.</li>
+        <li>Silence, freezing, “I guess,” or going along ≠ consent.</li>
+        <li>If you’re not sure, the safest move is to pause and check in.</li>
+      </ul>
+
+      <div class="note">
+        <b>Quick reset:</b> What do you actually know vs. what did you assume?
+      </div>
+
+      <div class="grid">
+        <button class="btn" data-action="replayFog">Replay fog</button>
+        <button class="btn btnPrimary" data-action="nextSteps">Continue</button>
+      </div>
+
+      <div style="margin-top:12px; font-size:12px; opacity:.62;">
+        Clear consent should feel clear.
+      </div>
+    </div>
+  `;
+}
+
+function startFog(){
+  const fogMount = document.getElementById("fogMount");
+  if(!fogMount) return;
+
+  const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  fogMount.innerHTML = ""; // reset
+
+  if(prefersReducedMotion) return;
+
+  fogMount.innerHTML = `
+    <div class="fogOverlay" aria-hidden="true">
+      <div class="fogLayer fog1"></div>
+      <div class="fogLayer fog2"></div>
+      <div class="fogLayer fog3"></div>
+    </div>
+  `;
+
+  // Remove after last animation completes
+  setTimeout(()=>{ if(fogMount) fogMount.innerHTML = ""; }, 6800);
+}
+
+
+let catRunnerCleanup = null;
+
+function initCatRunner(){
+  // Prevent double-mount if user re-renders the same screen
+  if (catRunnerCleanup) catRunnerCleanup();
+
+  const canvas = document.getElementById("cr_game");
+  const ctx = canvas?.getContext("2d");
+  if (!canvas || !ctx) return;
+
+  const scoreEl = document.getElementById("cr_score");
+  const speedEl = document.getElementById("cr_speed");
+  const restartBtn = document.getElementById("cr_restart");
+
+
+  // --- Cat SVG sprite (embedded) ---
+  const CAT_SVG_RAW = `<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M12.0196 14.9374C11.7284 14.9374 11.4307 14.9818 11.1784 15.0796C11.0546 15.1275 10.9032 15.2031 10.7699 15.3252C10.6361 15.4479 10.4632 15.6749 10.4632 15.9999C10.4632 16.3249 10.6361 16.5519 10.7699 16.6745C10.9032 16.7967 11.0546 16.8722 11.1784 16.9202C11.4307 17.018 11.7284 17.0624 12.0196 17.0624C12.3109 17.0624 12.6085 17.018 12.8609 16.9202C12.9846 16.8722 13.136 16.7967 13.2693 16.6745C13.4032 16.5519 13.5761 16.3249 13.5761 15.9999C13.5761 15.6749 13.4032 15.4479 13.2693 15.3252C13.136 15.2031 12.9846 15.1275 12.8609 15.0796C12.6085 14.9818 12.3109 14.9374 12.0196 14.9374Z" fill="#1C274C"/>
+<path d="M14.0365 12.6464C14.2015 12.38 14.5274 12.0625 15.0163 12.0625C15.5051 12.0625 15.831 12.38 15.996 12.6464C16.1681 12.9243 16.2501 13.2612 16.2501 13.5938C16.2501 13.9263 16.1681 14.2632 15.996 14.5411C15.831 14.8075 15.5051 15.125 15.0163 15.125C14.5274 15.125 14.2015 14.8075 14.0365 14.5411C13.8644 14.2632 13.7824 13.9263 13.7824 13.5938C13.7824 13.2612 13.8644 12.9243 14.0365 12.6464Z" fill="#1C274C"/>
+<path d="M9.01634 12.0625C8.52751 12.0625 8.20161 12.38 8.03658 12.6464C7.86445 12.9243 7.78247 13.2612 7.78247 13.5938C7.78247 13.9263 7.86445 14.2632 8.03658 14.5411C8.20161 14.8075 8.52751 15.125 9.01634 15.125C9.50518 15.125 9.83108 14.8075 9.9961 14.5411C10.1682 14.2632 10.2502 13.9263 10.2502 13.5938C10.2502 13.2612 10.1682 12.9243 9.9961 12.6464C9.83108 12.38 9.50518 12.0625 9.01634 12.0625Z" fill="#1C274C"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M6.09485 4.25C5.48148 4.25 4.77463 4.42871 4.20882 4.91616C3.62226 5.4215 3.27004 6.18781 3.27004 7.1875V9.0625L3.27005 9.06545C3.2712 9.35941 3.3211 9.94757 3.4888 10.4392C3.54365 10.6001 3.63129 10.8134 3.77764 11.0058C3.49364 11.5688 3.35904 12.1495 3.29787 12.7095C3.2468 13.1771 3.24611 13.6679 3.25424 14.1211C2.5932 14.3507 1.90877 14.6349 1.5932 14.8387C1.24524 15.0634 1.14534 15.5277 1.37006 15.8756C1.59478 16.2236 2.05903 16.3235 2.40698 16.0988C2.5234 16.0236 2.86686 15.8664 3.31867 15.6939C3.38755 16.173 3.52716 16.6095 3.7221 17.0063C3.56621 17.1035 3.42847 17.1935 3.31889 17.2652C3.27694 17.2926 3.23912 17.3173 3.20599 17.3387C2.85803 17.5634 2.75813 18.0277 2.98285 18.3756C3.20757 18.7236 3.67182 18.8235 4.01978 18.5988C4.0609 18.5722 4.10473 18.5436 4.15098 18.5134C4.28216 18.4278 4.43287 18.3294 4.59701 18.2288C5.18653 18.8313 5.91865 19.2964 6.67916 19.6462C8.45998 20.4654 10.569 20.75 12.0001 20.75C13.4311 20.75 15.5402 20.4654 17.321 19.6462C18.0815 19.2964 18.8136 18.8313 19.4031 18.2288C19.5673 18.3294 19.718 18.4278 19.8491 18.5134C19.8954 18.5436 19.9392 18.5722 19.9803 18.5988C20.3283 18.8235 20.7925 18.7236 21.0173 18.3756C21.242 18.0277 21.1421 17.5634 20.7941 17.3387C20.761 17.3173 20.7232 17.2926 20.6812 17.2652C20.5716 17.1935 20.4339 17.1035 20.2781 17.0063C20.473 16.6095 20.6127 16.173 20.6815 15.6938C21.1335 15.8663 21.4771 16.0236 21.5936 16.0988C21.9415 16.3235 22.4058 16.2236 22.6305 15.8756C22.8552 15.5277 22.7553 15.0634 22.4074 14.8387C22.0917 14.6349 21.4071 14.3506 20.7459 14.121C20.7541 13.6678 20.7534 13.177 20.7023 12.7095C20.6412 12.1495 20.5065 11.5688 20.2225 11.0058C20.3689 10.8134 20.4565 10.6001 20.5114 10.4392C20.6791 9.94758 20.729 9.35941 20.7301 9.06545L20.7302 9.0625V7.18761C20.7302 6.18792 20.3779 5.42162 19.7914 4.91628C19.2256 4.42882 18.5187 4.25011 17.9054 4.25011C17.4969 4.25011 17.0744 4.40685 16.7337 4.56076C16.3726 4.72392 15.9952 4.9359 15.6558 5.13136C15.5828 5.17339 15.5119 5.21444 15.443 5.25432L15.441 5.25548C15.177 5.4084 14.9427 5.5441 14.7339 5.65167C14.6042 5.7185 14.5035 5.7643 14.4285 5.79206C14.3969 5.80377 14.3767 5.80966 14.3663 5.81242C14.1129 5.81102 13.9514 5.79033 13.7181 5.76044C13.6681 5.75403 13.6147 5.74719 13.5564 5.74003C13.2098 5.69743 12.7722 5.65636 12.0001 5.65636C11.228 5.65636 10.7905 5.69743 10.4438 5.74003C10.3855 5.74719 10.3322 5.75403 10.2821 5.76044C10.0489 5.79033 9.88738 5.81102 9.63388 5.81242C9.62352 5.80966 9.60332 5.80376 9.57174 5.79206C9.49678 5.7643 9.39604 5.71849 9.26633 5.65166C9.05755 5.54408 8.82331 5.40842 8.55926 5.25548C8.48975 5.21523 8.41818 5.17377 8.34446 5.13132C8.00502 4.93584 7.62764 4.72384 7.26652 4.56067C6.92587 4.40675 6.50329 4.25 6.09485 4.25ZM6.16192 17.6138C6.49595 17.8657 6.8808 18.0879 7.30604 18.2835C8.83694 18.9877 10.7179 19.25 12.0001 19.25C13.2823 19.25 15.1632 18.9877 16.6941 18.2835C17.1194 18.0879 17.5042 17.8657 17.8382 17.6138C17.4858 17.5524 17.2179 17.245 17.2179 16.875C17.2179 16.4608 17.5537 16.125 17.9679 16.125C18.2951 16.125 18.6295 16.2068 18.9399 16.3204C19.0985 15.9885 19.1959 15.625 19.2226 15.2271C18.9249 15.1544 18.7193 15.125 18.6134 15.125C18.1992 15.125 17.8634 14.7892 17.8634 14.375C17.8634 13.9608 18.1992 13.625 18.6134 13.625C18.8081 13.625 19.0284 13.6542 19.2504 13.6974C19.2505 13.4213 19.2415 13.1502 19.2112 12.8724C19.1407 12.227 18.958 11.6541 18.5269 11.1447C18.3727 10.9625 18.1809 10.7813 17.9402 10.6045C17.6063 10.3594 17.5344 9.88999 17.7796 9.55611C18.0247 9.22224 18.4941 9.15031 18.828 9.39546C18.9471 9.48292 19.0597 9.57282 19.1659 9.66506C19.2099 9.43686 19.2295 9.19817 19.2302 9.06087V7.18761C19.2302 6.56231 19.0238 6.23486 18.8123 6.0527C18.5801 5.85266 18.2496 5.75011 17.9054 5.75011C17.835 5.75011 17.659 5.78868 17.3513 5.92771C17.064 6.0575 16.7432 6.23612 16.4043 6.43125C16.3407 6.4679 16.2759 6.50544 16.2106 6.54328C15.9428 6.69843 15.666 6.85883 15.4209 6.98509C15.2663 7.06473 15.1052 7.14099 14.9495 7.19867C14.8058 7.25192 14.607 7.3125 14.3941 7.3125C14.0223 7.3125 13.7617 7.27877 13.5115 7.2464C13.4654 7.24043 13.4196 7.23449 13.3735 7.22883C13.0848 7.19336 12.7084 7.15636 12.0001 7.15636C11.2919 7.15636 10.9154 7.19336 10.6267 7.22883C10.5807 7.23449 10.5349 7.24042 10.4887 7.24639C10.2386 7.27877 9.97796 7.3125 9.6061 7.3125C9.39326 7.3125 9.19445 7.25191 9.05069 7.19866C8.89497 7.14098 8.73386 7.06471 8.57928 6.98506C8.33423 6.8588 8.05742 6.69839 7.78968 6.54325C7.72435 6.50539 7.65955 6.46784 7.59589 6.43118C7.25702 6.23603 6.93614 6.05741 6.64888 5.92761C6.34115 5.78856 6.16522 5.75 6.09485 5.75C5.75062 5.75 5.42007 5.85254 5.18787 6.05259C4.97643 6.23475 4.77004 6.56219 4.77004 7.1875V9.06088C4.7707 9.19819 4.79025 9.43686 4.83425 9.66506C4.94053 9.57281 5.05309 9.48292 5.1722 9.39546C5.50608 9.15031 5.97547 9.22224 6.22062 9.55612C6.46577 9.88999 6.39385 10.3594 6.05997 10.6045C5.81926 10.7813 5.62748 10.9625 5.47331 11.1447C5.04223 11.6541 4.85949 12.227 4.789 12.8724C4.75865 13.1502 4.74966 13.4213 4.74975 13.6975C4.97192 13.6543 5.19231 13.625 5.38719 13.625C5.80141 13.625 6.13719 13.9608 6.13719 14.375C6.13719 14.7892 5.80141 15.125 5.38719 15.125C5.28121 15.125 5.07549 15.1544 4.77758 15.2271C4.80434 15.625 4.90168 15.9885 5.06027 16.3203C5.37069 16.2068 5.70504 16.125 6.03224 16.125C6.44646 16.125 6.78224 16.4608 6.78224 16.875C6.78224 17.245 6.51433 17.5524 6.16192 17.6138Z" fill="#1C274C"/>
+</svg>`;
+
+  function recolorSvg(svg, fill) {
+    return svg
+      .replace(/fill="(?!none)[^"]*"/g, `fill="${fill}"`)
+      .replace(/stroke="(?!none)[^"]*"/g, `stroke="${fill}"`);
+  }
+  function makeSvgDataUri(svgString) {
+    return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgString);
+  }
+
+  const catImg = new Image();
+  catImg.decoding = "async";
+  catImg.src = makeSvgDataUri(recolorSvg(CAT_SVG_RAW, "#15FFC8"));
+
+  const W = canvas.width, H = canvas.height;
+  const groundY = Math.round(H * 0.78);
+
+  const gravity = 2200;
+  const jumpVel = -780;
+  const dropVel = 900;
+
+  let running = true;
+let started = false;
+  let time = 0;
+  let score = 0;
+  let speed = 520;
+  let speedMult = 1;
+  let spawnTimer = 0;
+  let nextSpawn = 0.9;
+
+  const player = { x: 110, y: groundY, w: 46, h: 46, vy: 0, onGround: true };
+  const obstacles = [];
+
+  function rand(min, max){ return Math.random() * (max - min) + min; }
+
+  function spawnObstacle() {
+    const tall = Math.random() < 0.45;
+    const w = tall ? rand(18, 28) : rand(16, 24);
+    const h = tall ? rand(42, 66) : rand(28, 42);
+    obstacles.push({ x: W + 20, y: groundY, w, h });
+  }
+
+  function aabb(ax, ay, aw, ah, bx, by, bw, bh) {
+    const aTop = ay - ah, aLeft = ax, aRight = ax + aw, aBottom = ay;
+    const bTop = by - bh, bLeft = bx, bRight = bx + bw, bBottom = by;
+    return !(aRight < bLeft || aLeft > bRight || aBottom < bTop || aTop > bBottom);
+  }
+
+  function resetGame() {
+    running = true;
+    time = 0;
+    score = 0;
+    speed = 520;
+    speedMult = 1;
+    spawnTimer = 0;
+    nextSpawn = 0.9;
+    obstacles.length = 0;
+
+    player.y = groundY;
+    player.vy = 0;
+    player.onGround = true;
+
+    scoreEl.textContent = "0";
+    speedEl.textContent = "1.0";
+  }
+
+  function jump() {
+  if (!started) {
+    started = true;
+    running = true;
+    last = performance.now();
+    raf = requestAnimationFrame(loop);
+    return;
+  }
+
+  if (!running) {
+    resetGame();
+    drawStartOverlay();
+    started = false;
+    return;
+  }
+
+  if (player.onGround) {
+    player.vy = jumpVel;
+    player.onGround = false;
+  }
+}
+
+  function fastDrop() {
+    if (!player.onGround) player.vy = Math.max(player.vy, dropVel);
+  }
+
+  // Draw helpers
+  function roundRect(ctx, x, y, w, h, r) {
+    const radius = Math.min(r, w/2, h/2);
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + w - radius, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+    ctx.lineTo(x + w, y + h - radius);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+    ctx.lineTo(x + radius, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+  }
+
+  function drawGround() {
+    ctx.save();
+    ctx.strokeStyle = "rgba(209,254,255,.45)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, groundY + 1);
+    ctx.lineTo(W, groundY + 1);
+    ctx.stroke();
+
+    const tickCount = 26;
+    ctx.strokeStyle = "rgba(21,255,200,.25)";
+    ctx.lineWidth = 2;
+    for (let i = 0; i < tickCount; i++) {
+      const seg = (W / tickCount);
+      const x = (i * seg - (time * speed * 0.25) % seg);
+      ctx.beginPath();
+      ctx.moveTo(x, groundY + 10);
+      ctx.lineTo(x + 14, groundY + 10);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawObstacle(o) {
+    ctx.save();
+    ctx.translate(o.x, o.y - o.h);
+
+    ctx.fillStyle = "rgba(19,132,143,.22)";
+    ctx.strokeStyle = "rgba(209,254,255,.70)";
+    ctx.lineWidth = 3;
+
+    roundRect(ctx, 0, 0, o.w, o.h, 10);
+    ctx.fill(); ctx.stroke();
+
+    if (o.h > 44) {
+      ctx.fillStyle = "rgba(21,255,200,.14)";
+      ctx.strokeStyle = "rgba(21,255,200,.75)";
+      const bh = Math.min(18, o.h*0.35);
+      roundRect(ctx, -Math.min(14, o.w*0.6), o.h*0.38, Math.min(18, o.w*0.9), bh, 10);
+      ctx.fill(); ctx.stroke();
+    }
+
+    ctx.restore();
+  }
+
+function drawStartOverlay(){
+  ctx.clearRect(0, 0, W, H);
+  drawGround();
+  drawPlayer();
+
+  ctx.save();
+  ctx.fillStyle = "rgba(0,0,0,.45)";
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.fillStyle = "rgba(209,254,255,.95)";
+  ctx.font = "950 22px ui-sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText("Tap or Press Space to Start", W/2, H*0.48);
+
+  ctx.fillStyle = "rgba(209,254,255,.7)";
+  ctx.font = "900 13px ui-sans-serif";
+  ctx.fillText("This is just a reset break.", W/2, H*0.62);
+
+  ctx.restore();
+}
+
+  function drawPlayer() {
+    const { x, y, w, h } = player;
+
+    ctx.save();
+    ctx.fillStyle = "rgba(0,0,0,.18)";
+    ctx.beginPath();
+    ctx.ellipse(x + w*0.55, y + 10, w*0.55, 6, 0, 0, Math.PI*2);
+    ctx.fill();
+
+    if (!catImg.complete || catImg.naturalWidth === 0) {
+      ctx.fillStyle = "rgba(21,255,200,.18)";
+      ctx.strokeStyle = "rgba(21,255,200,.95)";
+      ctx.lineWidth = 3;
+      roundRect(ctx, x, y - h, w, h, 12);
+      ctx.fill(); ctx.stroke();
+      ctx.restore();
+      return;
+    }
+
+    const bob = player.onGround ? Math.sin(time * 12) * 1.5 : -2;
+    ctx.drawImage(catImg, x - 2, (y - h) + bob, w + 10, h + 10);
+    ctx.restore();
+  }
+
+  function drawOverlay(text) {
+    ctx.save();
+    ctx.fillStyle = "rgba(0,0,0,.35)";
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.fillStyle = "rgba(209,254,255,.95)";
+    ctx.font = "950 22px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial";
+    ctx.textAlign = "center";
+    ctx.fillText(text, W/2, H*0.46);
+
+    ctx.fillStyle = "rgba(209,254,255,.75)";
+    ctx.font = "900 13px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial";
+    ctx.fillText("Press Space / Tap to restart", W/2, H*0.62);
+    ctx.restore();
+  }
+
+  function step(dt) {
+    time += dt;
+
+    speed += 18 * dt;
+    speedMult = 1 + (speed - 520) / 900;
+    speedEl.textContent = speedMult.toFixed(1);
+
+    score += (dt * 10) * speedMult;
+    scoreEl.textContent = String(Math.floor(score));
+
+    player.vy += gravity * dt;
+    player.y += player.vy * dt;
+
+    if (player.y >= groundY) {
+      player.y = groundY;
+      player.vy = 0;
+      player.onGround = true;
+    } else {
+      player.onGround = false;
+    }
+
+    spawnTimer += dt;
+    if (spawnTimer >= nextSpawn) {
+      spawnTimer = 0;
+      nextSpawn = rand(0.65, 1.15) / Math.max(1, speedMult * 0.85);
+      spawnObstacle();
+    }
+
+    for (let i = obstacles.length - 1; i >= 0; i--) {
+      obstacles[i].x -= speed * dt;
+      if (obstacles[i].x < -80) obstacles.splice(i, 1);
+    }
+
+    for (const o of obstacles) {
+      if (aabb(player.x, player.y, player.w, player.h, o.x, o.y, o.w, o.h)) {
+        running = false;
+        break;
+      }
+    }
+
+    if (!running) {
+      const finalScore = Math.floor(score);
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    drawGround();
+    for (const o of obstacles) drawObstacle(o);
+    drawPlayer();
+    if (!running) drawOverlay("Game Over");
+  }
+
+  let raf = null;
+  let last = performance.now();
+  function loop(now) {
+    const dt = Math.min(0.033, (now - last) / 1000);
+    last = now;
+    if (running) step(dt);
+    draw();
+    raf = requestAnimationFrame(loop);
+  }
+
+  // Input (scoped + cleanup)
+  const onKeyDown = (e) => {
+    if (e.code === "Space" || e.code === "ArrowUp") { e.preventDefault(); jump(); }
+    if (e.code === "ArrowDown") { e.preventDefault(); fastDrop(); }
+    if (e.code === "KeyR") { e.preventDefault(); resetGame(); }
+  };
+
+  window.addEventListener("keydown", onKeyDown);
+  canvas.addEventListener("pointerdown", jump);
+  restartBtn.addEventListener("click", resetGame);
+
+  resetGame();
+drawStartOverlay();   // show start screen
+
+  // cleanup for SPA screen switches
+  catRunnerCleanup = () => {
+    if (raf) cancelAnimationFrame(raf);
+    window.removeEventListener("keydown", onKeyDown);
+    canvas.removeEventListener("pointerdown", jump);
+    restartBtn.removeEventListener("click", resetGame);
+    catRunnerCleanup = null;
+  };
+}
+
+function entryLabel(e){
+  return ({
+    crossed_boundary:"Worried I crossed a boundary",
+    they_mad:"They’re mad and I think I did something wrong",
+    not_sure_ok:"Not sure if what happened was okay",
+    made_uncomfortable:"Someone said I made them uncomfortable",
+    cant_explain:"I don’t know how to explain it",
+    learn_consent:"I want to understand consent better",
+    accidental_assault:"I think I accidentally sexually assaulted someone"
+  })[e] || "—";
+}
+function scenarioLabel(s){
+  return ({
+    freeze:"They froze or got quiet",
+    pulled_away:"They pulled away",
+    drinking:"We were drinking",
+    not_sure_wanted:"Not sure they wanted it",
+    upset_after:"They seemed upset afterward",
+    not_sure_what:"I’m still not sure what happened",
+    pressure:"I kept persuading or pressuring them",
+    age_power:"There was an age or power difference",
+    digital:"Something happened digitally (photos/messages)",
+    coercion:"I ignored a clear ‘no’",
+    relationship:"We were in a relationship and I assumed consent"
+  })[s] || "—";
+}
+
+function routeScenario(s){
+  state.scenario = s;
+
+  // Always show an explanation screen for every selection.
+  // (These screens then route into the shared emotion → next steps flow.)
+
+  // Core behavioral-signal scenarios
+  if(s === "freeze") return go("A_freeze_whatItMeans");
+  if(s === "pulled_away") return go("C_pulledAway_signal");
+  if(s === "drinking") return go("B_drinking_basics");
+
+  // Wide-branch scenarios
+  if(s === "pressure") return go("D_pressure");
+  if(s === "age_power") return go("E_age_power");
+  if(s === "digital") return go("F_digital");
+  if(s === "coercion") return go("G_coercion");
+  if(s === "relationship") return go("H_relationship");
+
+  // Ambiguity / aftermath scenarios
+  if(s === "not_sure_wanted") return go("I_not_sure_wanted");
+  if(s === "upset_after") return go("J_upset_after");
+  if(s === "not_sure_what") return go("K_not_sure_what");
+
+  // If we somehow reach an unknown key, default to emotion (safe fallback).
+  return go("emotion");
+}
+
+
+// ===== Spiral Interrupt (Ashamed) =====
+let spiralCleanup = null;
+
+function spiralInterruptMarkup(){
+  return `
+  <div class="siWrap" style="margin-top:14px;">
+    <div class="panel" id="si_panel">
+      <div class="panelHeader" id="si_header" tabindex="0" role="button" aria-expanded="false" aria-controls="si_body">
+        <div class="titleBlock">
+          <div class="panelTitle">Spiral Interrupt</div>
+          <div class="panelSub">Click to open. Tap the spiral to steady it.</div>
+        </div>
+        <div class="chev" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M6 9l6 6 6-6" stroke="rgba(209,254,255,.9)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="panelBody" id="si_body">
+        <div class="inner">
+          <div class="spiralStage" id="si_stage" tabindex="0" aria-label="Tap to steady the spiral">
+            <svg id="si_spiral" viewBox="0 0 200 200" aria-hidden="true">
+              <path d="M100 100
+                       m -5, 0
+                       a 5,5 0 1,0 10,0
+                       a 15,15 0 1,1 -30,0
+                       a 25,25 0 1,0 50,0
+                       a 35,35 0 1,1 -70,0
+                       a 45,45 0 1,0 90,0
+                       a 55,55 0 1,1 -110,0"
+                    fill="none"
+                    stroke="#15FFC8"
+                    stroke-width="3"
+                    stroke-linecap="round"/>
+            </svg>
+          </div>
+
+          <div class="msg" id="si_msg">When you’re ready, tap the spiral to slow it down.</div>
+
+          <div class="footer">Spiraling feels productive. It isn’t.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  `;
+}
+
+function initSpiralInterrupt(){
+  // Cleanup old listeners if re-rendered
+  if(spiralCleanup) spiralCleanup();
+
+  const panel = document.getElementById('si_panel');
+  const header = document.getElementById('si_header');
+
+  const reducedTag = document.getElementById('si_reducedTag');
+  const spiral = document.getElementById('si_spiral');
+  const stage = document.getElementById('si_stage');
+  const msg = document.getElementById('si_msg');
+
+  if(!panel || !header || !spiral || !stage || !msg) return;
+
+  const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(prefersReducedMotion && reducedTag) reducedTag.style.display = 'inline-block';
+
+  // Motion state
+  let angle = 0;
+  const spinSpeedStart = prefersReducedMotion ? 6 : 12;
+  let spinSpeed = 0;
+  let taps = 0;
+  let spinning = false;
+  let rafId = null;
+
+  function renderAngle(){ spiral.style.transform = `rotate(${angle}deg)`; }
+
+  function animate(){
+    if(!spinning) return;
+    angle += spinSpeed;
+    renderAngle();
+    rafId = requestAnimationFrame(animate);
+  }
+
+  function startSpin(){
+    if(spinning) return;
+    if(spinSpeed === 0 && taps > 0){
+      taps = 0;
+      msg.textContent = 'Tap the spiral to slow it down.';
+    }
+    spinSpeed = spinSpeedStart;
+    spinning = true;
+    animate();
+  }
+
+  function stopSpin(){
+    spinning = false;
+    spinSpeed = 0;
+    if(rafId) cancelAnimationFrame(rafId);
+    rafId = null;
+  }
+
+  function resetSpiral(){
+    stopSpin();
+    angle = 0;
+    taps = 0;
+    renderAngle();
+    msg.textContent = 'When you’re ready, tap the spiral to slow it down.';
+  }
+
+  function openPanel(){
+    panel.classList.add('open');
+    header.setAttribute('aria-expanded', 'true');
+    startSpin();
+  }
+
+  function closePanel(){
+    panel.classList.remove('open');
+    header.setAttribute('aria-expanded', 'false');
+    stopSpin();
+    taps = 0;
+    msg.textContent = 'When you’re ready, tap the spiral to slow it down.';
+  }
+
+  function togglePanel(){
+    const isOpen = panel.classList.contains('open');
+    if(isOpen) closePanel(); else openPanel();
+  }
+
+  function tapToSteady(){
+    if(!spinning) return;
+    taps++;
+    const factor = prefersReducedMotion ? 0.92 : 0.88;
+    spinSpeed *= factor;
+
+    if(taps === 5) msg.textContent = 'Keep going.';
+    if(taps === 12) msg.textContent = 'You’re interrupting the spiral.';
+
+    if(spinSpeed < 0.6){
+      stopSpin();
+      msg.innerHTML = 'You can face what happened<br>without collapsing into it.';
+    }
+  }
+
+  const onHeaderKey = (e)=>{
+    if(e.key === 'Enter' || e.key === ' '){
+      e.preventDefault();
+      togglePanel();
+    }
+  };
+  const onStageKey = (e)=>{
+    if(e.key === 'Enter' || e.key === ' '){
+      e.preventDefault();
+      tapToSteady();
+    }
+  };
+
+  header.addEventListener('click', togglePanel);
+  header.addEventListener('keydown', onHeaderKey);
+  stage.addEventListener('click', tapToSteady);
+  stage.addEventListener('keydown', onStageKey);
+
+  resetSpiral();
+
+  spiralCleanup = ()=>{
+    if(rafId) cancelAnimationFrame(rafId);
+    header.removeEventListener('click', togglePanel);
+    header.removeEventListener('keydown', onHeaderKey);
+    stage.removeEventListener('click', tapToSteady);
+    stage.removeEventListener('keydown', onStageKey);
+    spiralCleanup = null;
+  };
+}
+
+
+
+// ===== Brick Wall Reveal (Defensive) =====
+let brickWallCleanup = null;
+
+function brickWallMarkup(){
+  return `
+  <div class="bwWrap">
+    <div class="panel" id="bw_panel">
+      <div class="panelHeader" id="bw_header" tabindex="0" role="button" aria-expanded="false" aria-controls="bw_body">
+        <div class="titleBlock">
+          <div class="panelTitle">Lower the Wall</div>
+          <div class="panelSub">Drag or tap bricks into the pile to reveal what's underneath.</div>
+        </div>
+        <div class="chev" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M6 9l6 6 6-6" stroke="rgba(209,254,255,.9)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="panelBody" id="bw_body">
+        <div class="inner">
+          <div class="bwLayout">
+            <div>
+              <div class="bwWall">
+                <div id="bw_message" class="bwMessage" style="--bw-reveal:0; --bw-blur:10px;">
+                  <div class="bwMessageInner">
+                    You can listen without agreeing.<br/>
+                    You can take responsibility without losing yourself.
+                    <span class="small">Try: "I hear you. I'm taking this seriously."</span>
+                  </div>
+                </div>
+                <div id="bw_bricks" class="bwBricks"></div>
+              </div>
+              <div class="bwProgress">
+                <span id="bw_progressText">0 / 9 bricks moved</span>
+                <span id="bw_revealText">Message: 0% revealed</span>
+              </div>
+            </div>
+            <div class="bwPile">
+              <div class="bwPileTitle">Brick Pile</div>
+              <div class="bwPileHint">Drag or tap any brick to set it down.</div>
+              <div id="bw_drop" class="bwDropZone">Drop bricks here</div>
+            </div>
+          </div>
+          <div class="bwFooter">Defensiveness protects you. It can also block growth.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  `;
+}
+
+function initBrickWall(){
+  if(brickWallCleanup) brickWallCleanup();
+
+  const panel     = document.getElementById('bw_panel');
+  const header    = document.getElementById('bw_header');
+  const body      = document.getElementById('bw_body');
+  const brickCont = document.getElementById('bw_bricks');
+  const message   = document.getElementById('bw_message');
+  const dropZone  = document.getElementById('bw_drop');
+  const progText  = document.getElementById('bw_progressText');
+  const revText   = document.getElementById('bw_revealText');
+
+  if(!panel || !header || !brickCont || !message || !dropZone) return;
+
+  const TOTAL = 9;
+  let removed = 0;
+
+  function clamp(n,a,b){ return Math.max(a,Math.min(b,n)); }
+
+  function setReveal(){
+    const r = removed / TOTAL;
+    message.style.setProperty('--bw-reveal', clamp(r,0,1).toFixed(3));
+    message.style.setProperty('--bw-blur', ((1-r)*10).toFixed(2)+'px');
+    progText.textContent = `${removed} / ${TOTAL} bricks moved`;
+    revText.textContent  = `Message: ${Math.round(r*100)}% revealed`;
+  }
+
+  function removeBrick(brick){
+    if(brick.dataset.removed === '1') return;
+    brick.dataset.removed = '1';
+    brick.style.visibility = 'hidden';
+    brick.setAttribute('draggable','false');
+    removed++;
+    setReveal();
+  }
+
+  // Build bricks
+  for(let i=0;i<TOTAL;i++){
+    const b = document.createElement('div');
+    b.className = 'bwBrick';
+    b.setAttribute('draggable','true');
+    b.dataset.id = i;
+    b.dataset.removed = '0';
+
+    // Drag API
+    b.addEventListener('dragstart', (e)=>{
+      if(b.dataset.removed==='1'){ e.preventDefault(); return; }
+      e.dataTransfer.setData('text/plain', b.dataset.id);
+    });
+
+    // Touch / click fallback
+    b.addEventListener('click', ()=>{ removeBrick(b); });
+
+    brickCont.appendChild(b);
+  }
+
+  // Drop zone
+  const onDragOver = (e)=>{ e.preventDefault(); dropZone.classList.add('dragOver'); };
+  const onDragLeave = ()=>{ dropZone.classList.remove('dragOver'); };
+  const onDrop = (e)=>{
+    e.preventDefault();
+    dropZone.classList.remove('dragOver');
+    const id = e.dataTransfer.getData('text/plain');
+    const brick = brickCont.querySelector(`.bwBrick[data-id="${id}"]`);
+    if(brick) removeBrick(brick);
+  };
+  dropZone.addEventListener('dragover', onDragOver);
+  dropZone.addEventListener('dragleave', onDragLeave);
+  dropZone.addEventListener('drop', onDrop);
+
+  // Panel toggle
+  function openPanel(){
+    panel.classList.add('open');
+    header.setAttribute('aria-expanded','true');
+  }
+  function togglePanel(){
+    const isOpen = panel.classList.contains('open');
+    isOpen ? panel.classList.remove('open') && header.setAttribute('aria-expanded','false')
+           : openPanel();
+    header.setAttribute('aria-expanded', !isOpen ? 'true' : 'false');
+  }
+  const onHeaderKey = (e)=>{
+    if(e.key==='Enter'||e.key===' '){ e.preventDefault(); togglePanel(); }
+  };
+  header.addEventListener('click', togglePanel);
+  header.addEventListener('keydown', onHeaderKey);
+
+  setReveal();
+
+  brickWallCleanup = ()=>{
+    header.removeEventListener('click', togglePanel);
+    header.removeEventListener('keydown', onHeaderKey);
+    dropZone.removeEventListener('dragover', onDragOver);
+    dropZone.removeEventListener('dragleave', onDragLeave);
+    dropZone.removeEventListener('drop', onDrop);
+    brickWallCleanup = null;
+  };
+}
+
+// ===== Anger Pressure Meter =====
+let __angerResetTimer = null;
+let angerPressureCleanup = null;
+
+// ===== Next Right Move (Guilt) =====
+let nextRightMoveCleanup = null;
+
+function nextRightMoveMarkup(){
+  return `
+  <div class="nrmWrap">
+    <div class="panel" id="nrmPanel">
+      <div class="panelHeader" id="nrmPanelHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="nrmPanelBody">
+        <div class="titleBlock">
+          <div class="panelTitle">Next right move</div>
+          <div class="panelSub">Guilt becomes useful when it turns into a concrete next step</div>
+        </div>
+        <div class="chev" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M2.5 5L7 9.5L11.5 5" stroke="rgba(209,254,255,.78)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="panelBody" id="nrmPanelBody">
+        <div class="inner">
+          <div class="nrmCard">
+            <p style="font-size:13px;color:rgba(209,254,255,.82);margin:0 0 10px 0;line-height:1.4;">Tap through 5 moves — one at a time.</p>
+
+            <div class="nrmPathWrap" aria-label="Progress path">
+              <div class="nrmPath">
+                <div class="nrmLine"><div class="nrmLineFill" id="nrmLineFill"></div></div>
+                <div class="nrmNode" id="nrmN0"><span>1</span></div>
+                <div class="nrmNode" id="nrmN1"><span>2</span></div>
+                <div class="nrmNode" id="nrmN2"><span>3</span></div>
+                <div class="nrmNode" id="nrmN3"><span>4</span></div>
+                <div class="nrmNode" id="nrmN4"><span>5</span></div>
+              </div>
+            </div>
+
+            <div class="nrmMoveBox" aria-live="polite">
+              <div class="nrmLabelRow">
+                <div class="nrmLabel">Right now</div>
+                <div class="nrmBadge"><span class="nrmBadgeDot"></span><span id="nrmBadgeText">Ready</span></div>
+              </div>
+              <div id="nrmMove" class="nrmMove">Press the button.</div>
+              <div id="nrmDesc" class="nrmDesc">You'll get one next move at a time.</div>
+              <div class="nrmChallenge" id="nrmChallenge" style="display:none;">
+                <div class="nrmChallengeTitle">Mini challenge</div>
+                <div class="nrmChallengeText" id="nrmChallengeText"></div>
+              </div>
+            </div>
+
+            <div class="nrmControls">
+              <button id="nrmNextBtn" class="nrmBtn" type="button">What's the next right move?</button>
+              <button id="nrmResetBtn" class="nrmBtn nrmBtnGhost" type="button">Reset</button>
+            </div>
+            <div style="text-align:center;"><div class="nrmStamp" id="nrmStamp">LOCKED IN</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  `;
+}
+
+function initNextRightMove(){
+  if(nextRightMoveCleanup) nextRightMoveCleanup();
+
+  // Panel toggle (dropdown)
+  const panel  = document.getElementById("nrmPanel");
+  const header = document.getElementById("nrmPanelHeader");
+  if(panel && header){
+    function openNrmPanel(){
+      panel.classList.add('open');
+      header.setAttribute('aria-expanded','true');
+    }
+    function toggleNrmPanel(){
+      const isOpen = panel.classList.contains('open');
+      if(isOpen){ panel.classList.remove('open'); header.setAttribute('aria-expanded','false'); }
+      else { openNrmPanel(); }
+    }
+    const onHeaderKey = (e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggleNrmPanel(); } };
+    header.addEventListener('click', toggleNrmPanel);
+    header.addEventListener('keydown', onHeaderKey);
+    var _panelCleanup = ()=>{
+      header.removeEventListener('click', toggleNrmPanel);
+      header.removeEventListener('keydown', onHeaderKey);
+    };
+  }
+
+  const moves = [
+    {
+      title: "Pause.",
+      desc: "Stop the momentum. Put your phone down for 60 seconds. Let your body cool before you act.",
+      challenges: [
+        "Count 10 slow breaths. Don't do anything else while you count.",
+        "Unclench your jaw. Drop your shoulders. Exhale longer than you inhale.",
+        "Put your phone face-down for one minute."
+      ]
+    },
+    {
+      title: "Acknowledge.",
+      desc: "Name what happened without minimizing: what you did, what you didn't do, and what you should have done.",
+      challenges: [
+        "Write one sentence: \"I did ___.\" No excuses, no backstory.",
+        "Replace \"but\" with \"and\" once. Example: \"I didn't mean to — and it still hurt.\"",
+        "Name the exact moment things shifted (one phrase)."
+      ]
+    },
+    {
+      title: "Apologize (if appropriate).",
+      desc: "Keep it short. Don't ask for comfort. Don't ask for forgiveness. Respect whatever response you get.",
+      challenges: [
+        "Draft a 2-sentence apology. Delete anything that asks for reassurance.",
+        "Add one line: \"I'll respect whatever space you want.\"",
+        "If you're not sure it's appropriate: don't send. Save a draft."
+      ]
+    },
+    {
+      title: "Respect space.",
+      desc: "If they want distance, give it. No follow-ups. No pressure. Space is part of repair.",
+      challenges: [
+        "Set a 24-hour rule: no contacting them today.",
+        "Resist the urge to check in or explain yourself further. Silence is not abandonment — it's respect.",
+        "Ask yourself: \"What boundary do I need to respect?\""
+      ]
+    },
+    {
+      title: "Change behavior.",
+      desc: "Pick one concrete change you'll make next time. If you need education or support, go get it.",
+      challenges: [
+        "Choose ONE rule for yourself: \"If there's uncertainty, I pause and ask.\"",
+        "Write one sentence: \"Next time, I will ___.\". Make it specific.",
+        "Pick one resource you'll actually use (training, reading, conversation)."
+      ]
+    }
+  ];
+
+  let idx = -1;
+
+  const moveEl      = document.getElementById("nrmMove");
+  const descEl      = document.getElementById("nrmDesc");
+  const nextBtn     = document.getElementById("nrmNextBtn");
+  const resetBtn    = document.getElementById("nrmResetBtn");
+  const badgeText   = document.getElementById("nrmBadgeText");
+  const challengeBox= document.getElementById("nrmChallenge");
+  const challengeText = document.getElementById("nrmChallengeText");
+  const lineFill    = document.getElementById("nrmLineFill");
+  const stamp       = document.getElementById("nrmStamp");
+  const nodes       = [0,1,2,3,4].map(i=>document.getElementById("nrmN"+i));
+
+  if(!moveEl || !nextBtn) return;
+
+  function rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+  function showStamp(text){
+    stamp.textContent = text || "LOCKED IN";
+    stamp.classList.remove("show");
+    void stamp.offsetWidth;
+    stamp.classList.add("show");
+    setTimeout(()=>stamp.classList.remove("show"), 900);
+  }
+
+  function render(){
+    if(idx < 0){
+      moveEl.textContent = "Press the button.";
+      descEl.textContent = "You'll get one next move at a time.";
+      badgeText.textContent = "Ready";
+      challengeBox.style.display = "none";
+      lineFill.style.width = "0%";
+      nodes.forEach(n=>{ n.classList.remove("active","done"); });
+      return;
+    }
+    const m = moves[idx];
+    moveEl.textContent = m.title;
+    descEl.textContent = m.desc;
+    badgeText.textContent = `Step ${idx+1} / ${moves.length}`;
+    const pct = (idx)/(moves.length-1)*100;
+    lineFill.style.width = (idx===0 ? 0 : pct) + "%";
+    nodes.forEach((n,i)=>{
+      n.classList.toggle("done", i < idx);
+      n.classList.toggle("active", i === idx);
+    });
+    challengeBox.style.display = "block";
+    challengeText.textContent = rand(m.challenges);
+    showStamp(idx === moves.length-1 ? "NEXT TIME" : "GOOD");
+  }
+
+  function onNext(){
+    idx = (idx+1) % moves.length;
+    render();
+  }
+  function onReset(){
+    idx = -1;
+    render();
+    showStamp("RESET");
+  }
+
+  nextBtn.addEventListener("click", onNext);
+  resetBtn.addEventListener("click", onReset);
+
+  nextRightMoveCleanup = ()=>{
+    nextBtn.removeEventListener("click", onNext);
+    resetBtn.removeEventListener("click", onReset);
+    if(typeof _panelCleanup === 'function') _panelCleanup();
+    nextRightMoveCleanup = null;
+  };
+
+  render();
+}
+
+function angerPressureMarkup(){
+  return `
+  <div class="pressureWrap" aria-label="Anger pressure meter">
+    <div class="pressureTop">
+      <div class="pressureLabel">Pressure meter (how activated are you?)</div>
+      <div class="pressureValue">Level: <span id="angerLevel">5</span>/10</div>
+    </div>
+    <div class="pressureBar" aria-hidden="true">
+      <div class="pressureFill" id="angerFill" style="width:50%"></div>
+    </div>
+    <input
+      class="pressureSlider"
+      id="angerMeter"
+      type="range"
+      min="1" max="10" step="1" value="5"
+      aria-label="Set anger level from 1 to 10"
+    />
+    <div class="pressureTicks" id="pressureTicks" aria-hidden="true"></div>
+    <div class="pressureCopy" id="angerCopy">
+      Somewhere in the middle. Enough heat to feel it — enough space to choose what you do next.
+    </div>
+    <div class="pressurePrompt" id="angerPrompt" style="display:none;">
+      <b>High heat.</b> Before you text, post, argue, or do anything: take a 20–40 second reset.
+      <div style="margin-top:8px;">
+        <button class="btn btnSmall" type="button" id="angerResetBtn">Do a 20s reset</button>
+      </div>
+    </div>
+  </div>
+  `;
+}
+
+function initAngerPressure(){
+  if(angerPressureCleanup) angerPressureCleanup();
+  if(__angerResetTimer){ clearInterval(__angerResetTimer); __angerResetTimer = null; }
+
+  const meter    = document.getElementById("angerMeter");
+  const levelEl  = document.getElementById("angerLevel");
+  const fill     = document.getElementById("angerFill");
+  const copy     = document.getElementById("angerCopy");
+  const prompt   = document.getElementById("angerPrompt");
+  const resetBtn = document.getElementById("angerResetBtn");
+  const ticksEl  = document.getElementById("pressureTicks");
+
+  if(!meter || !levelEl || !fill || !copy) return;
+
+  function setCopy(n){
+    if(n <= 2) return "Low heat. You might be irritated or keyed up — but you still have a lot of control.";
+    if(n <= 4) return "Moderate heat. Something feels unfair, disrespectful, or misunderstood.";
+    if(n <= 6) return "Rising heat. Your body is activated — slow down before you decide what to do.";
+    if(n <= 8) return "High heat. This is where people say or do things they regret. Delay any action.";
+    return "Overheated. Your nervous system is in fight mode. Don't engage — regulate first.";
+  }
+
+  function paint(n){
+    const pct = Math.round((n/10)*100);
+    levelEl.textContent = String(n);
+    fill.style.width = pct + "%";
+    copy.textContent = setCopy(n);
+    if(prompt) prompt.style.display = n >= 7 ? "block" : "none";
+  }
+
+  function update(){
+    const n = Number(meter.value || 5);
+    paint(n);
+  }
+
+  function positionTicks(){
+    if(!ticksEl) return;
+    const min = 1, max = 10;
+    const trackW = meter.offsetWidth;
+    const thumbR = 10;
+    const usable = trackW - thumbR * 2;
+    ticksEl.innerHTML = "";
+    [1,2,3,4,5,6,7,8,9,10].forEach(val => {
+      const frac = (val - min) / (max - min);
+      const px = thumbR + frac * usable;
+      const span = document.createElement("span");
+      span.textContent = String(val);
+      span.style.left = px + "px";
+      ticksEl.appendChild(span);
+    });
+  }
+
+  positionTicks();
+  const onResize = ()=> positionTicks();
+  window.addEventListener("resize", onResize);
+  meter.addEventListener("input", update);
+
+  if(resetBtn){
+    const onReset = ()=>{
+      if(__angerResetTimer) clearInterval(__angerResetTimer);
+      let t = 20;
+      resetBtn.disabled = true;
+      const original = resetBtn.textContent;
+      resetBtn.textContent = `Reset: ${t}s`;
+      __angerResetTimer = setInterval(()=>{
+        t -= 1;
+        if(t <= 0){
+          clearInterval(__angerResetTimer);
+          __angerResetTimer = null;
+          resetBtn.disabled = false;
+          resetBtn.textContent = "Done. Continue.";
+          const n = Math.max(1, Number(meter.value) - 1);
+          meter.value = String(n);
+          update();
+          setTimeout(()=>{ resetBtn.textContent = original; }, 1400);
+          return;
+        }
+        resetBtn.textContent = `Reset: ${t}s`;
+      }, 1000);
+    };
+    resetBtn.addEventListener("click", onReset);
+    angerPressureCleanup = ()=>{
+      meter.removeEventListener("input", update);
+      window.removeEventListener("resize", onResize);
+      resetBtn.removeEventListener("click", onReset);
+      if(__angerResetTimer){ clearInterval(__angerResetTimer); __angerResetTimer = null; }
+      angerPressureCleanup = null;
+    };
+  } else {
+    angerPressureCleanup = ()=>{
+      meter.removeEventListener("input", update);
+      window.removeEventListener("resize", onResize);
+      angerPressureCleanup = null;
+    };
+  }
+
+  update();
+}
+
+// ===== Ongoing Consent Road (Relationship) =====
+let ongoingConsentCleanup = null;
+
+function ongoingConsentMarkup(){
+  return `
+    <div class="ocWrap">
+      <div class="repairPanel" id="ocPanel">
+        <div class="panelHeader" id="ocPanelHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="ocPanelBody">
+          <div class="titleBlock">
+            <div class="panelTitle">🛣️ Ongoing Consent Road</div>
+            <div class="panelSub">Build the check-in habit, one step at a time</div>
+          </div>
+          <div class="chev" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M2.5 5L7 9.5L11.5 5" stroke="rgba(209,254,255,.78)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+        <div class="panelBody" id="ocPanelBody">
+          <div class="inner" style="padding:0 18px 18px 18px;">
+
+            <div class="ocTopCopy" style="margin-top:4px;">
+              <p><b>Consent doesn’t carry over.</b> It has to be present throughout an interaction — and revisited over time.</p>
+              <p><b>Over a single interaction:</b> check in when things change — pace, intensity, location, or comfort. <b>Over the relationship:</b> what felt okay before might not feel okay today.</p>
+              <p>The prevention habit: <b>ask clearly</b>, listen carefully, and stop the moment anything feels uncertain.</p>
+            </div>
+
+            <div style="margin: 0 0 10px 0; font-size: 12px; color: rgba(209,254,255,.55); letter-spacing:.3px; text-transform: uppercase; font-weight: 800; text-align:center;">
+              ← Scroll the road to explore →
+            </div>
+
+            <div class="ocLayout">
+              <div class="ocRoadWrap" id="ocRoadWrap" aria-label="Ongoing consent roadmap">
+                <div class="ocRoadInner" id="ocRoadInner">
+                  <div class="ocRoad" aria-hidden="true"></div>
+                  <div id="ocProgressLine"></div>
+                  <div id="ocMileLayer"></div>
+                </div>
+              </div>
+
+              <div class="ocSide">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                  <h2 style="margin:0;">Build the habit</h2>
+                  <span id="ocCount" style="font-size:12px; color:rgba(209,254,255,.60); font-weight:800; padding:3px 8px; border-radius:999px; border:1px solid rgba(209,254,255,.16); background:rgba(0,0,0,.14);">0 / 11</span>
+                </div>
+                <p>Each tap adds a real check-in phrase to the road. Consent is a <em>repeated practice</em>, not a one-time question.</p>
+
+                <div class="ocControls">
+                  <button id="ocAddBtn" class="ocBtn" type="button">➕ Add check-in</button>
+                  <button id="ocResetBtn" class="ocBtn ocBtnGhost" type="button">↺ Reset</button>
+                </div>
+
+                <div style="margin-top:12px;">
+                  <span id="ocTip" style="font-size:12px; color:rgba(209,254,255,.65); font-style:italic;">Tip: check in when things change.</span>
+                </div>
+
+                <div id="ocEndNote" class="ocEndNote">
+                  ✅ <b>Road complete.</b> If clarity ever drops, pause and check in — or stop. Ongoing consent is a <em>pattern</em>, not a moment.
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+let _roadListenersCleanup = null;
+
+function initOngoingConsentRoad(){
+  // Only clean up road-internal listeners (not the panel toggle stored in ongoingConsentCleanup)
+  if(_roadListenersCleanup){ _roadListenersCleanup(); _roadListenersCleanup = null; }
+
+  const PHRASES = [
+    { text: "Are you okay?",                          emoji: "\uD83D\uDCAC" },
+    { text: "Do you want to?",                        emoji: "\uD83E\uDD1D" },
+    { text: "Does this feel good?",                   emoji: "\uD83D\uDC9A" },
+    { text: "What do you like?",                      emoji: "\u2728" },
+    { text: "Should we stop?",                        emoji: "\u270B" },
+    { text: "Show me what feels good.",               emoji: "\uD83D\uDCAC" },
+    { text: "I like this \u2014 what do you like?",  emoji: "\uD83D\uDC9A" },
+    { text: "You seem nervous. Slow down?",           emoji: "\uD83C\uDF3F" },
+    { text: "Let's take our time.",                   emoji: "\u23F8\uFE0F" },
+    { text: "I need to stop for a minute.",           emoji: "\u270B" },
+    { text: "I'm nervous \u2014 I've never done this.", emoji: "\uD83D\uDCAC" }
+  ];
+
+  const roadWrap     = document.getElementById('ocRoadWrap');
+  const roadInner    = document.getElementById('ocRoadInner');
+  const progressLine = document.getElementById('ocProgressLine');
+  const mileLayer    = document.getElementById('ocMileLayer');
+  const addBtn       = document.getElementById('ocAddBtn');
+  const resetBtn     = document.getElementById('ocResetBtn');
+  const countEl      = document.getElementById('ocCount');
+  const endNote      = document.getElementById('ocEndNote');
+  const tipEl        = document.getElementById('ocTip');
+
+  if(!roadWrap || !roadInner || !mileLayer || !addBtn || !resetBtn || !countEl || !endNote) return;
+
+  let idx   = 0;
+  let timer = null;
+
+  const STEP    = 160;
+  const PADDING = 80;
+
+  const TIPS = [
+    "Tip: check in when things change.",
+    "Tip: slow down if you're unsure.",
+    "Tip: a pause is never the wrong move.",
+    "Tip: enthusiasm > silence.",
+    "Tip: one question can change everything."
+  ];
+  let tipIdx = 0;
+
+  function setRoadWidth(){
+    // Inner div grows to just past the last placed dot
+    // First dot at PADDING, last dot at PADDING + (idx-1)*STEP
+    // Add a small tail (PADDING/2) after the last dot
+    var lastDotX = idx > 0 ? (PADDING + (idx - 1) * STEP) : PADDING;
+    var total = lastDotX + PADDING;
+    roadInner.style.minWidth = Math.max(300, total) + "px";
+  }
+
+  function updateCount(){
+    countEl.textContent = idx + " / " + PHRASES.length + " check-ins";
+    if(idx >= PHRASES.length){
+      endNote.style.display = "block";
+      addBtn.disabled = true;
+      if(timer){ clearInterval(timer); timer = null; }
+    } else {
+      endNote.style.display = "none";
+      addBtn.disabled = false;
+    }
+  }
+
+  function rotateTip(){
+    if(!tipEl) return;
+    tipIdx = (tipIdx + 1) % TIPS.length;
+    tipEl.style.opacity = "0";
+    setTimeout(function(){
+      tipEl.textContent = TIPS[tipIdx];
+      tipEl.style.opacity = "1";
+    }, 200);
+  }
+
+  function scrollToEnd(){
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var target = roadInner.scrollWidth - roadWrap.clientWidth;
+    if(target <= roadWrap.scrollLeft) return;
+    if(reduce) roadWrap.scrollLeft = target;
+    else roadWrap.scrollTo({ left: target, behavior: "smooth" });
+  }
+
+  function addOne(){
+    if(idx >= PHRASES.length) return;
+
+    var x    = PADDING + idx * STEP;
+    var side = (idx % 2 === 0) ? "top" : "bottom";
+
+    var mile = document.createElement("div");
+    mile.className = "ocMile";
+    mile.style.left = x + "px";
+
+    var pin = document.createElement("div");
+    pin.className = "ocPin";
+    pin.setAttribute("aria-hidden", "true");
+
+    var bubble = document.createElement("div");
+    bubble.className = "ocBubble " + side;
+    var phrase = PHRASES[idx];
+    bubble.innerHTML = '<span style="font-size:15px;display:block;margin-bottom:3px;">' + phrase.emoji + "</span>" + phrase.text;
+
+    mile.appendChild(pin);
+    mile.appendChild(bubble);
+    mileLayer.appendChild(mile);
+
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){ bubble.classList.add("show"); });
+    });
+
+    idx++;
+    setRoadWidth();
+
+    if(progressLine){
+      // Line runs from first dot (PADDING) to current dot (PADDING + (idx-1)*STEP)
+      // left is set to PADDING in JS init; width = distance between dots
+      progressLine.style.left = PADDING + "px";
+      progressLine.style.width = (Math.max(0, idx - 1) * STEP) + "px";
+    }
+
+    updateCount();
+    rotateTip();
+    setTimeout(scrollToEnd, 60);
+  }
+
+  function reset(){
+    idx = 0;
+    mileLayer.innerHTML = "";
+    endNote.style.display = "none";
+    addBtn.disabled = false;
+    if(timer){ clearInterval(timer); timer = null; }
+    if(progressLine){ progressLine.style.width = "0px"; progressLine.style.left = PADDING + "px"; }
+    setRoadWidth();
+    roadWrap.scrollLeft = 0;
+    updateCount();
+    if(tipEl){
+      tipIdx = 0;
+      tipEl.style.opacity = "1";
+      tipEl.textContent = TIPS[0];
+    }
+  }
+
+  if(tipEl) tipEl.style.transition = "opacity .2s ease";
+
+  addBtn.addEventListener("click", addOne);
+  resetBtn.addEventListener("click", reset);
+
+  setRoadWidth();
+  updateCount();
+
+  _roadListenersCleanup = function(){
+    if(timer){ clearInterval(timer); timer = null; }
+    addBtn.removeEventListener("click", addOne);
+    resetBtn.removeEventListener("click", reset);
+    _roadListenersCleanup = null;
+  };
+}
+
+function render(){
+  // Simple progress indicator map
+  const progressMap = {
+    landing: 0,
+    bringsYouHere: 1,
+    entryDeescalate: 2,
+    topScenario: 2,
+    A_freeze_whatItMeans: 3,
+    A_freeze_impact: 4,
+    B_drinking_basics: 3,
+    B_drinking_rule: 4,
+    C_pulledAway_signal: 3,
+    C_pulledAway_script: 4,
+    D_pressure: 3,
+    E_age_power: 3,
+    F_digital: 3,
+    G_coercion: 3,
+    H_relationship: 3,
+    H_relationship_ongoing: 3,
+    I_not_sure_wanted: 3,
+    J_upset_after: 3,
+    K_not_sure_what: 3,
+    emotion: 4,
+    emotionMessage: 4,
+    nextSteps: 5,
+    learn: 6,
+    prevent: 6,
+    repair: 6,
+    support: 6,
+    closing: 7
+  };
+  const totalSteps = 7;
+  function progressBar(step){
+    if(!step) return '';
+    const percent = Math.round((step/totalSteps)*100);
+    return `<div style="margin-bottom:12px;">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Step ${step} of ${totalSteps}</div>
+      <div style="height:6px;background:rgba(255,255,255,.08);border-radius:6px;overflow:hidden;">
+        <div style="height:100%;width:${percent}%;background:var(--accent);transition:width .3s ease;"></div>
+      </div>
+    </div>`;
+  }
+  const id = state.screenId;
+
+  // Cleanup: stop ongoing-consent timers/listeners when leaving that screen
+  if(id !== "H_relationship" && id !== "H_relationship_ongoing"){
+    if(_roadListenersCleanup){ _roadListenersCleanup(); }
+    if(ongoingConsentCleanup){ ongoingConsentCleanup(); }
+  }
+
+  // Make background subtly lighten as users move forward (spiral → calm)
+  const stepNow = progressMap[id] || 0;
+  const t = Math.max(0, Math.min(1, stepNow / totalSteps));
+  // Interpolate from deep background to lighter teal as progress increases
+  // Start: #1D414E (29,65,78)  → End: #13848F (19,132,143)
+  const r = Math.round(29 + (19-29)*t);
+  const g = Math.round(65 + (132-65)*t);
+  const b = Math.round(78 + (143-78)*t);
+  const base = `rgb(${r},${g},${b})`;
+  // Keep your existing SafeBAE gradient vibe, but brighten the base over time
+  const glow1 = 0.18 + 0.10*t; // mint glow increases
+  const glow2 = 0.22 + 0.06*t; // teal glow increases
+  const glow3 = 0.10 + 0.06*t; // light glow increases
+  document.body.style.background = `
+    radial-gradient(1200px 800px at 20% 10%, rgba(21,255,200,${glow1}), transparent 55%),
+    radial-gradient(1000px 700px at 90% 20%, rgba(19,132,143,${glow2}), transparent 60%),
+    radial-gradient(900px 600px at 40% 100%, rgba(209,254,255,${glow3}), transparent 55%),
+    ${base}
+  `;
+
+  if(id==="landing"){
+    const spiral = `
+      <div style="display:flex; align-items:flex-start; gap:20px; margin-bottom:18px;">
+        <div class="h1" style="opacity:.85; line-height:1.3; flex:1;">
+          <div style="position:relative;">
+            <div style="font-size:20px; filter:blur(0px); opacity:.85;">Did I harm someone?</div>
+            <div style="font-size:20px; transform:rotate(-2deg); opacity:.8;">Was that consent?</div>
+            <div style="font-size:20px; transform:rotate(1.5deg); opacity:.75;">Did I cross a boundary?</div>
+            <div style="font-size:20px; transform:rotate(-1deg); opacity:.7;">Am I a bad person?</div>
+            <div style="font-size:20px; transform:rotate(2deg); opacity:.65;">Am I a rapist?</div>
+          </div>
+        </div>
+        <div style="width:120px; opacity:.6;">
+          <svg viewBox="0 0 160 160" width="100%" height="100%" fill="none" stroke="#15FFC8" stroke-linecap="round" stroke-linejoin="round" opacity="0.85">
+            <!-- Dense chaotic scribble cluster -->
+            <g stroke-width="1.6">
+              <path d="M80 20 C140 10,150 70,100 90 C50 110,10 60,60 40 C110 20,150 120,80 130 C10 140,20 20,120 50 C150 70,120 160,60 150 C0 140,40 10,140 60" />
+              <path d="M70 30 C130 50,120 110,70 90 C20 70,90 20,130 80 C170 140,40 150,50 80 C60 10,140 30,110 120" />
+              <path d="M60 40 C120 20,160 80,90 100 C20 120,10 60,80 50 C150 40,130 150,50 130" />
+              <path d="M90 35 C140 60,100 130,60 95 C20 60,110 30,140 100 C160 150,30 120,70 60" />
+              <path d="M50 50 C120 40,150 90,100 110 C50 130,20 80,80 60 C140 40,120 150,60 140" />
+            </g>
+            <g stroke-width="1.2" opacity="0.7">
+              <path d="M85 25 C120 30,135 75,95 95 C55 115,30 70,70 55 C110 40,130 125,75 120" />
+              <path d="M75 45 C125 55,115 115,70 100 C25 85,95 35,125 105" />
+              <path d="M65 60 C110 65,100 120,60 110 C20 100,85 50,110 115" />
+            </g>
+          </svg>
+        </div>
+      </div>
+      <div class="p"></div>
+      </div>
+    `;
+
+    const mainCard = card(
+      "Not sure if you crossed a line?",
+      [
+        "This is a <b>private</b>, non-punitive reflection tool. You can leave anytime.",
+        "We're not here to judge you. We're here to help you slow down, learn, and choose safer next steps."
+      ],
+      "<b>Privacy:</b> This prototype collects no names, no account info, and stores nothing.",
+      grid(
+        btn("Start","start","btn btnPrimary") +
+        btn("Why this exists","whyBtn","btn") +
+        btn("Jump to pathways menu","pathMenu","btn")
+      )
+    );
+
+    screen.innerHTML = progressBar(progressMap[id]) + spiral + mainCard;
+    return;
+  }
+
+  if(id==="whyThisExists"){
+    screen.innerHTML = backBtn() + card(
+      "Why this exists",
+      [
+        "This tool exists because many people have questions about moments that didn’t feel clear — and want to do better, but aren’t sure where to start.",
+        "Instead of spiraling alone or searching random forums, you can slow down here and think it through step by step.",
+        "This space is built for reflection, accountability, and growth — not judgment."
+      ],
+      null,
+      grid(btn("Continue","toBrings","btn btnPrimary"))
+    );
+    actions.toBrings=()=>go("bringsYouHere");
+    return;
+  }
+
+  if(id==="bringsYouHere"){
+    screen.innerHTML = backBtn() + card(
+      "What brings you here?",
+      ["It’s okay to not have a clear answer yet."],
+      null,
+      grid(
+        btn("I’m worried I might have crossed a boundary","e1") +
+        btn("The person I was with is mad and I’m worried I did something wrong","e2") +
+        btn("I’m not sure if what happened was okay","e3") +
+        btn("Someone said I made them uncomfortable","e4") +
+        btn("I don’t know how to explain it","e5") +
+        btn("I just want to understand consent better","e6") +
+        btn("I think I accidentally sexually assaulted someone","e7")
+      )
+    );
+    actions.e1=()=>{state.entry="crossed_boundary"; go("topScenario");};
+    actions.e2=()=>{state.entry="they_mad"; go("topScenario");};
+    actions.e3=()=>{state.entry="not_sure_ok"; go("topScenario");};
+    actions.e4=()=>{state.entry="made_uncomfortable"; go("topScenario");};
+    actions.e5=()=>{state.entry="cant_explain"; go("topScenario");};
+    actions.e6=()=>{state.entry="learn_consent"; go("consentEdu");};
+    actions.e7=()=>{state.entry="accidental_assault"; go("entryDeescalate");};
+    return;
+  }
+
+  if(id==="entryDeescalate"){
+    screen.innerHTML = backBtn() + card(
+      "Let’s slow this down.",
+      [
+        "It sounds like you’re carrying something heavy.",
+        "This space isn’t here to judge or label you. It’s here to help you understand what happened and what you can do next.",
+        "We’ll focus on behaviors, impact, and safer next steps."
+      ],
+      null,
+      grid(
+        btn("Continue","continue","btn btnPrimary") +
+        btn("Go back","back")
+      )
+    );
+    actions.continue=()=>go("topScenario");
+    actions.back=()=>go("bringsYouHere");
+    return;
+  }
+
+  if(id==="topScenario"){
+    screen.innerHTML = backBtn() + card(
+      "Which feels closest to what happened?",
+      ["Pick one. No details needed."],
+      null,
+      grid(
+        btn("They froze or got quiet","s1") +
+        btn("They pulled away","s2") +
+        btn("We were drinking","s3") +
+        btn("I’m not sure they really wanted it","s4") +
+        btn("They seemed upset or distant afterwards","s5") +
+        btn("I kept persuading or pressuring them","s7") +
+        btn("There was an age or power difference","s8") +
+        btn("Something happened digitally (photos/messages)","s9") +
+        btn("I ignored a clear ‘no’","s10") +
+        btn("We were in a relationship and I assumed consent","s11") +
+        btn("I’m still not sure what happened","s6")
+      )
+    );
+    actions.s1=()=>routeScenario("freeze");
+    actions.s2=()=>routeScenario("pulled_away");
+    actions.s3=()=>routeScenario("drinking");
+    actions.s4=()=>routeScenario("not_sure_wanted");
+    actions.s5=()=>routeScenario("upset_after");
+    actions.s6=()=>routeScenario("not_sure_what");
+    actions.s7=()=>routeScenario("pressure");
+    actions.s8=()=>routeScenario("age_power");
+    actions.s9=()=>routeScenario("digital");
+    actions.s10=()=>routeScenario("coercion");
+    actions.s11=()=>routeScenario("relationship");
+    return;
+  }
+
+  // ===== Existing Path A (Freeze) =====
+  if(id==="A_freeze_whatItMeans"){
+    screen.innerHTML = backBtn() + card(
+      "🧊 When someone freezes…",
+      [
+        "Sometimes people go quiet, stiff, or unresponsive when they feel overwhelmed or unsafe. That can be a <b>freeze response</b>.",
+        "Freezing does <b>not</b> mean “yes.” If you notice freezing, the safest move is to <b>pause and check in</b>."
+      ],
+      `<details style="margin-top:4px;">
+        <summary style="cursor:pointer; font-weight:900; color: var(--sb-light);">Learn More About Why This Happens</summary>
+        <div style="margin-top:8px; color: var(--muted); line-height:1.45;">
+          When people sense threat or overwhelm, the nervous system can shift into automatic survival states (often described as <b>fight</b>, <b>flight</b>, or <b>freeze</b>). Freeze can look like going quiet, becoming still, or feeling “stuck.” It can happen even when someone wants to speak up — it’s not always a conscious choice.
+          <br><br>
+          Some researchers also describe a more intense form of freezing (sometimes called <b>tonic immobility</b>) where the body becomes temporarily unable to move or respond. The key takeaway: if you notice freezing, it’s a signal to <b>stop</b>, <b>check in</b>, and prioritize safety.
+        </div>
+      </details>`,
+      grid(btn("Continue","A1","btn btnPrimary"))
+    );
+    actions.A1=()=>go("A_freeze_impact");
+    return;
+  }
+  if(id==="A_freeze_impact"){
+    screen.innerHTML = backBtn() + card(
+      "Impact matters — even without intent.",
+      [
+        "If someone froze and things continued, they may have felt unsafe, pressured, or overwhelmed.",
+        "<b>Even if you didn’t intend harm</b>, continuing when someone freezes can leave them feeling violated.",
+        "What matters now is what you do next: slow down, take responsibility, and learn skills that prevent harm."
+      ],
+      null,
+      grid(btn("Continue","toEmotion","btn btnPrimary"))
+    );
+    actions.toEmotion=()=>go("emotion");
+    return;
+  }
+
+  // ===== Existing Path B (Drinking) =====
+if(id==="B_drinking_basics"){
+  screen.innerHTML = backBtn() + card(
+    "Alcohol changes consent.",
+    [
+      `
+      <div class="alcoholRow">
+        <div style="flex:1;">
+          Consent needs to be clear and freely given. If someone is <b>significantly impaired</b>, they can’t make informed choices.
+          <br><br>
+          Alcohol is also a risk factor for sexual harm — so “pause and check in” matters <b>more</b>, not less.
+        </div>
+
+        <img 
+          src="red-cup.png"
+          alt="Red solo cup"
+          class="alcoholIcon"
+        />
+      </div>
+      `
+    ],
+    `<details style="margin-top:4px;">
+      <summary style="cursor:pointer; font-weight:900; color: var(--sb-light);">
+        Learn More About Why This Happens
+      </summary>
+      <div style="margin-top:8px; color: var(--muted); line-height:1.45;">
+        Alcohol can reduce judgment, make it harder to notice discomfort cues, and increase impulsivity. It can also affect a person’s ability to freely and clearly communicate what they want.
+        <br><br>
+        Because intoxication blurs signals, the safest practice is to slow down, check in clearly, and treat uncertainty as a stop sign.
+      </div>
+    </details>`,
+    grid(btn("Continue","B1","btn btnPrimary"))
+  );
+  actions.B1=()=>go("B_drinking_rule");
+  return;
+}
+
+  if(id==="B_drinking_rule"){
+    screen.innerHTML = backBtn() + card(
+      "A simple safety rule",
+      [
+        "If you’re asking yourself “were they too drunk?” treat that as a <b>stop sign</b>.",
+        "Choose the safer option: stop, make sure everyone gets home safely, and revisit another time when everyone is sober."
+      ],
+      null,
+      grid(btn("Continue","toEmotion","btn btnPrimary"))
+    );
+    actions.toEmotion=()=>go("emotion");
+    return;
+  }
+
+  // ===== Existing Path C (Pulled away) =====
+  if(id==="C_pulledAway_signal"){
+    screen.innerHTML = backBtn() + card(
+      "Pulling away is information.",
+      [
+        "Consent can be withdrawn at any time.",
+        "Nonverbal signals — like pulling away, going silent, or freezing — are reasons to <b>stop</b> and <b>check in</b>, not to keep going."
+      ],
+      `<details style="margin-top:4px;">
+        <summary style="cursor:pointer; font-weight:900; color: var(--sb-light);">Learn More About Why This Happens</summary>
+        <div style="margin-top:8px; color: var(--muted); line-height:1.45;">
+          People don’t always say “no” out loud. Sometimes they pull away, go quiet, tense up, or disengage because they feel unsure, overwhelmed, or unsafe.
+          <br><br>
+          The practical rule is simple: if you notice withdrawal, pause immediately and ask a clear check-in — then respect the answer (including silence or hesitation).
+        </div>
+      </details>`,
+      grid(btn("Continue","C1","btn btnPrimary"))
+    );
+    actions.C1=()=>go("C_pulledAway_script");
+    return;
+  }
+  if(id==="C_pulledAway_script"){
+    screen.innerHTML = backBtn() + card(
+      "What to do in the moment",
+      ["Pause. Take your hands/body back. Try a simple check-in:"],
+      "<b>Script:</b> “Hey — are you okay? Want to stop? We can stop anytime.”<br><br>Then wait. If they hesitate, go quiet, or pull away again: <b>stop</b>.",
+      grid(btn("Continue","toEmotion","btn btnPrimary"))
+    );
+    actions.toEmotion=()=>go("emotion");
+    return;
+  }
+
+  // ===== New Branch D =====
+  if(id==="D_pressure"){
+    screen.innerHTML = backBtn() + card(
+      "Pressure and persuasion",
+      [
+        "Repeatedly asking, convincing, bargaining, or emotionally pressuring someone can undermine consent.",
+        "If someone agreed only after being worn down — or to avoid conflict — they may not have felt free to choose.",
+        "A good rule: if you have to persuade, it’s not a yes. The safest move is to stop and give space."
+      ],
+      `<details style="margin-top:4px;">
+        <summary style="cursor:pointer; font-weight:900; color: var(--sb-light);">Learn More About Why This Happens</summary>
+        <div style="margin-top:8px; color: var(--muted); line-height:1.45;">
+          Consent depends on freedom to choose. Pressure changes the situation by making “yes” feel like the easiest way to end discomfort, avoid anger, or keep the relationship stable.
+          <br><br>
+          Even when someone says yes, if it came after repeated persuasion, guilt-tripping, or bargaining, they may have felt they couldn’t say no safely. That’s why “one ask” and accepting no immediately is a safer norm.
+        </div>
+      </details>`,
+      grid(btn("Continue","toEmotion","btn btnPrimary"))
+    );
+    actions.toEmotion=()=>go("emotion");
+    return;
+  }
+
+  // ===== New Branch E =====
+  if(id==="E_age_power"){
+    screen.innerHTML = backBtn() + card(
+      "Age or power differences",
+      [
+        "Differences in age, status, popularity, or authority can affect someone’s ability to freely consent.",
+        "When one person has more power, it’s easier for the other person to feel pressured to go along.",
+        "When in doubt, step back. Choosing distance can be a form of accountability and prevention."
+      ],
+      `<details style="margin-top:4px;">
+        <summary style="cursor:pointer; font-weight:900; color: var(--sb-light);">Learn More About Why This Happens</summary>
+        <div style="margin-top:8px; color: var(--muted); line-height:1.45;">
+          Power differences — including age gaps, social status, experience, authority, or emotional leverage — can shift how safe someone feels saying no. Even without explicit threats, imbalance can create subtle pressure.
+          <br><br>
+          Research on coercion and consent shows that people are less likely to refuse when they fear social consequences, disappointment, or losing connection. That’s why ethical responsibility increases when there is a power gap: the person with more power must take extra care to ensure consent is truly voluntary.
+        </div>
+      </details>`,
+      grid(btn("Continue","toEmotion","btn btnPrimary"))
+    );
+    actions.toEmotion=()=>go("emotion");
+    return;
+  }
+
+  // ===== New Branch F (Digital) =====
+  if(id==="F_digital"){
+    screen.innerHTML = backBtn() + card(
+      "Digital consent matters too",
+      [
+        "Sharing photos, screenshots, or private messages without permission can cause serious harm.",
+        "Pressuring someone to send images or respond sexually is also a consent issue.",
+        "Digital harm is still harm — even if no one was physically present."
+      ],
+      `<details style="margin-top:4px;">
+        <summary style="cursor:pointer; font-weight:900; color: var(--sb-light);">
+          Learn More About Why This Matters
+        </summary>
+        <div style="margin-top:8px; color: var(--muted); line-height:1.45;">
+          Digital interactions can feel casual or fast-moving, but consent still applies.
+          Screenshots, forwarding messages, or saving intimate content without permission
+          can violate trust and privacy.
+          <br><br>
+          Prevention rule: never assume digital access equals digital permission.
+        </div>
+      </details>`,
+      grid(btn("Continue","toEmotion","btn btnPrimary"))
+    );
+    actions.toEmotion = ()=>go("emotion");
+    return;
+  }
+
+  // ===== New Branch G (Coercion) =====
+  if(id==="G_coercion"){
+    screen.innerHTML = backBtn() + card(
+      "Ignoring a clear ‘no’",
+      [
+        "If someone said no, stop means stop.",
+        "Continuing after a clear no is crossing a boundary — even if it was brief, even if you felt confused, even if you were ‘caught up.’",
+        "Accountability here means acknowledging impact, stopping immediately in the future, and taking active steps to change behavior."
+      ],
+      `<details style="margin-top:4px;">
+        <summary style="cursor:pointer; font-weight:900; color: var(--sb-light);">Learn More About Why This Happens</summary>
+        <div style="margin-top:8px; color: var(--muted); line-height:1.45;">
+          People sometimes override “no” because of entitlement, panic, arousal, peer norms, or the belief that they can change someone’s mind.
+          <br><br>
+          The prevention takeaway is direct: “no” ends the moment. If you struggle with stopping, that’s a sign you need stronger skills, boundaries, and accountability supports — not more persuasion.
+        </div>
+      </details>`,
+      grid(btn("Continue","toEmotion","btn btnPrimary"))
+    );
+    actions.toEmotion=()=>go("emotion");
+    return;
+  }
+
+  // ===== New Branch H =====
+  if(id==="H_relationship" || id==="H_relationship_ongoing"){
+    screen.innerHTML = backBtn() + `
+      <div class="h1">Assuming consent in a relationship</div>
+      <div class="p">Being in a relationship does not automatically mean consent. Consent is required every time — and it can change moment to moment.</div>
+      <div class="note" style="margin-bottom:14px;">If you assumed yes without checking in, the prevention move is to build a new habit: ask clearly, slow down, and respect boundaries right away.</div>
+      ${ongoingConsentMarkup()}
+      ${grid(btn("Continue","toEmotion","btn btnPrimary"))}
+    `;
+
+    // Panel toggle
+    (function(){
+      const panel  = document.getElementById("ocPanel");
+      const header = document.getElementById("ocPanelHeader");
+      if(!panel||!header) return;
+      function toggle(){
+        const open = panel.classList.contains("open");
+        panel.classList.toggle("open", !open);
+        header.setAttribute("aria-expanded", String(!open));
+        if(!open) setTimeout(initOngoingConsentRoad, 50);
+      }
+      function onKey(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); toggle(); } }
+      header.addEventListener("click", toggle);
+      header.addEventListener("keydown", onKey);
+      var _prevCleanup = ongoingConsentCleanup;
+      ongoingConsentCleanup = function(){
+        header.removeEventListener("click", toggle);
+        header.removeEventListener("keydown", onKey);
+        if(_prevCleanup) _prevCleanup();
+        ongoingConsentCleanup = null;
+      };
+    })();
+
+    actions.toEmotion = ()=>go("emotion");
+    return;
+  }
+
+  // ===== New Branch I =====
+  if(id==="I_not_sure_wanted"){
+    screen.innerHTML = backBtn() + card(
+      "Not sure they wanted it",
+      [
+        "If you’re not sure they wanted it, treat that uncertainty seriously.",
+        "Consent usually looks like active participation — not silence, stiffness, or doing it just to ‘get it over with.’",
+        "When in doubt: pause, ask, and be ready to stop without argument."
+      ],
+      `<details style="margin-top:4px;">
+        <summary style="cursor:pointer; font-weight:900; color: var(--sb-light);">Learn More About Why This Happens</summary>
+        <div style="margin-top:8px; color: var(--muted); line-height:1.45;">
+          People don’t always say no clearly — even when they don’t want to continue. They might go along to avoid conflict, to protect the other person’s feelings, or because they feel frozen or unsure how to stop things.
+          <br><br>
+          This is why <b>active, enthusiastic participation</b> is the clearest signal of a real yes. Silence, passivity, or “going along with it” are not the same as consent. If you’re reading uncertainty and continuing anyway, that uncertainty matters — and it’s always safer to pause and check in than to keep going.
+        </div>
+      </details>`,
+      grid(btn("Continue","toEmotion","btn btnPrimary"))
+    );
+    actions.toEmotion=()=>go("emotion");
+    return;
+  }
+
+  // ===== New Branch J =====
+  if(id==="J_upset_after"){
+    screen.innerHTML = backBtn() + card(
+      "They seemed upset afterward",
+      [
+        "If someone became distant, upset, or quiet afterward, that can be a sign they didn’t feel okay about what happened.",
+        "You don’t need them to ‘prove’ anything for their feelings to matter.",
+        "Accountability here can look like listening, apologizing without pressure, and respecting whatever boundaries they set."
+      ],
+      `<details style="margin-top:4px;">
+        <summary style="cursor:pointer; font-weight:900; color: var(--sb-light);">Learn More About Why This Happens</summary>
+        <div style="margin-top:8px; color: var(--muted); line-height:1.45;">
+          Emotional withdrawal after a sexual encounter can be a sign that someone felt unsafe, pressured, or violated — even if they didn’t say so in the moment. People often need time and distance before they can process what happened.
+          <br><br>
+          Silence afterward isn’t the same as being okay. If someone is distant, quiet, or avoidant, that response deserves to be taken seriously — not explained away or minimized. The most accountable response is to create space, listen without defensiveness, and let them lead.
+        </div>
+      </details>`,
+      grid(btn("Continue","toEmotion","btn btnPrimary"))
+    );
+    actions.toEmotion=()=>go("emotion");
+    return;
+  }
+
+  // ===== New Branch K =====
+  if(id==="K_not_sure_what"){
+    screen.innerHTML = backBtn() + card(
+      "Still not sure what happened",
+      [
+        "Confusion is common — especially when emotions, alcohol, or pressure were involved.",
+        "A helpful question: did you check in clearly and get an enthusiastic yes? If not, the safest assumption is that you need stronger consent practices.",
+        "You can’t redo the past, but you can choose accountability now: learn, change habits, and avoid repeating harm."
+      ],
+      `<details style="margin-top:4px;">
+        <summary style="cursor:pointer; font-weight:900; color: var(--sb-light);">Learn More About Why This Happens</summary>
+        <div style="margin-top:8px; color: var(--muted); line-height:1.45;">
+          Confusion after a sexual encounter is common — especially when alcohol, strong emotions, or social pressure were involved. Our brains can struggle to process events clearly in the moment, and certainty often only comes later.
+          <br><br>
+          If you’re unsure whether something was okay, that uncertainty itself is meaningful. A clear yes — enthusiastic, verbal, and freely given — is something you tend to remember. If you can’t recall that, the accountable move is to take the uncertainty seriously, reflect honestly, and build stronger habits going forward.
+        </div>
+      </details>`,
+      grid(btn("Continue","toEmotion","btn btnPrimary"))
+    );
+    actions.toEmotion=()=>go("emotion");
+    return;
+  }
+
+
+
+
+  // ===== Shared emotion + next steps =====
+  if(id==="emotion"){
+    screen.innerHTML = backBtn() + card(
+      "What are you feeling right now?",
+      ["Pick the closest one."],
+      null,
+      grid(
+        btnIcon("Guilt","guilt","😔") +
+        btnIcon("Defensive","defensive","😤") +
+        btnIcon("Confused / unsure","confused","😕") +
+        btnIcon("Ashamed","ashamed","😳") +
+        btnIcon("Anxious / panicking","anxious","😰") +
+        btnIcon("Angry","angry","😠") +
+        btnIcon("Numb","numb","😶")
+      )
+    );
+    actions.guilt=()=>{state.emotion="guilt"; go("emotionMessage");};
+    actions.defensive=()=>{state.emotion="defensive"; go("emotionMessage");};
+    actions.confused=()=>{state.emotion="confused"; go("emotionMessage");};
+    actions.ashamed=()=>{state.emotion="ashamed"; go("emotionMessage");};
+    actions.anxious=()=>{state.emotion="anxious"; go("emotionMessage");};
+    actions.angry=()=>{state.emotion="angry"; go("emotionMessage");};
+    actions.numb=()=>{state.emotion="numb"; go("emotionMessage");};
+    return;
+  }
+
+  if(id==="emotionMessage"){
+
+    if(state.emotion==="confused"){
+      screen.innerHTML = backBtn() + fogFeature();
+      setTimeout(startFog, 0);
+      actions.replayFog = ()=>startFog();
+      actions.nextSteps = ()=>go("nextSteps");
+      return;
+    }
+
+    const msg = state.emotion==="guilt"
+      ? `You’re feeling guilty.
+
+That feeling usually shows up when you care about impact. It means something in you recognizes that what happened may not have felt okay to the other person.
+
+Guilt doesn’t mean you’re permanently a bad person. It means you’re noticing something that needs attention.
+
+Instead of spiraling, slow down and get specific. Ask yourself: what exactly would I do differently next time?
+
+Guilt becomes useful when it turns into a concrete behavior change. That’s accountability.`
+      : (state.emotion==="defensive"
+        ? `You’re feeling defensive.
+
+That’s common when something threatens how you see yourself. It’s uncomfortable to even consider that you may have caused harm.
+
+Defensiveness often sounds like: “I didn’t mean to,” “That’s not who I am,” or “It wasn’t that bad.”
+
+You can care about your identity and still examine your behavior honestly.
+
+Try this: if you set aside your intention for a moment, what might their experience have been?`
+        : (state.emotion==="confused"
+          ? `You’re feeling confused.
+
+Confusion often happens when signals were subtle, mixed, or never clearly spoken — especially if emotions, pressure, or alcohol were involved.
+
+Instead of asking “Was that technically okay?” try asking: was there clear, enthusiastic agreement?
+
+Uncertainty usually means clarity was missing.
+
+Going forward: if you don’t have a clear yes, slow down. Ask directly. Be prepared to stop without arguing.`
+          : (state.emotion==="ashamed"
+            ? `You’re feeling shame.
+
+Shame can feel heavy. It can make you want to disappear, deny, or punish yourself.
+
+But shame tends to focus on identity — “I am bad” — instead of behavior — “I made a harmful choice.” Those are not the same.
+
+You don’t have to destroy yourself to take responsibility. What matters is whether you’re willing to look honestly at what happened and change your behavior going forward.
+
+Stay with the discomfort without collapsing into self-hatred. Growth requires staying present.`
+            : (state.emotion==="anxious"
+              ? `You’re feeling anxious or panicked.
+
+When consequences feel possible, your body reacts. That’s a nervous system response.
+
+Panic can push you toward worst-case thinking. Pause and slow your body first.
+
+You don’t have to solve everything immediately. Focus on one question: what is the most responsible next step I can take?
+
+Calm first. Act second.`
+              : (state.emotion==="angry"
+                ? `You’re feeling angry.
+
+Anger often shows up when something feels unfair, exaggerated, or threatening.
+
+But anger can protect your ego in ways that block reflection.
+
+Instead of asking “Is this fair to me?” try asking: what might have felt uncomfortable or unsafe for them?
+
+Don’t text. Don’t argue. Let the intensity drop before making decisions. Reflection requires steadiness.`
+                : `You’re feeling numb.
+
+Sometimes when something feels overwhelming, your brain shuts things down. Numbness can be a protective response.
+
+Not feeling much doesn’t mean nothing happened. And it doesn’t remove responsibility.
+
+If emotions aren’t accessible right now, focus on behavior: did I check in clearly? Did I continue after hesitation? Was there pressure involved?
+
+You can change future actions even before your feelings fully catch up.`)))));
+
+    const parts = msg.split("\n\n").filter(Boolean);
+
+    let extra = "";
+
+if(state.emotion==="guilt"){
+  extra = nextRightMoveMarkup();
+}
+
+if(state.emotion==="anxious"){
+  extra = breatheWidget() + `<div class="mutedBox"><b>Try this:</b> breathe in as it grows… breathe out as it shrinks. Two cycles is enough to get a little steadier.</div>`;
+}
+
+if(state.emotion==="numb"){
+  extra = catRunnerMarkup();
+}
+
+if(state.emotion==="ashamed"){
+  extra = spiralInterruptMarkup();
+}
+
+if(state.emotion==="defensive"){
+  extra = brickWallMarkup();
+}
+
+if(state.emotion==="angry"){
+  extra = angerPressureMarkup() + `<div class="mutedBox"><b>Goal:</b> get your heat low enough to choose your next step — not to pretend you aren't angry.</div>`;
+}
+
+    screen.innerHTML = backBtn() + card(
+      "Okay.",
+      parts,
+      null,
+      extra + grid(btn("Continue","nextSteps","btn btnPrimary"))
+    );
+if(state.emotion==="numb"){
+  // wait a tick so the canvas exists in the DOM
+  setTimeout(initCatRunner, 0);
+} else {
+  // if we leave the numb screen, stop the game loop / listeners
+  if (catRunnerCleanup) catRunnerCleanup();
+}
+
+if(state.emotion==="guilt"){
+  setTimeout(initNextRightMove, 0);
+} else {
+  if(nextRightMoveCleanup) nextRightMoveCleanup();
+}
+
+if(state.emotion==="ashamed"){
+  // mount spiral interrupt after DOM paint
+  setTimeout(initSpiralInterrupt, 0);
+} else {
+  if (spiralCleanup) spiralCleanup();
+}
+
+if(state.emotion==="defensive"){
+  setTimeout(initBrickWall, 0);
+} else {
+  if (brickWallCleanup) brickWallCleanup();
+}
+
+if(state.emotion==="angry"){
+  setTimeout(initAngerPressure, 0);
+} else {
+  if(angerPressureCleanup) angerPressureCleanup();
+}
+
+    actions.nextSteps=()=>go("nextSteps");
+    return;
+  }
+
+  if(id==="nextSteps"){
+    screen.innerHTML = backBtn() + card(
+      "What do you want to do next?",
+      ["Choose one to start. You can come back and try others."],
+      null,
+      grid(
+        btn("Learn (quick basics)","learn") +
+        btn("Prevent it from happening again (skills)","prevent") +
+        btn("Repair (if appropriate)","repair") +
+        btn("🧠 Belief Shift (reactive thoughts)","beliefShift") +
+        btn("Talk to someone / get support","support") +
+        btn("Finish for now","closing")
+      ) + `<div class="mutedBox"><b>Reminder:</b> This is not legal advice. It doesn’t determine guilt or labels.</div>`
+    );
+    actions.learn=()=>go("learn");
+    actions.prevent=()=>go("prevent");
+    actions.repair=()=>go("repair");
+    actions.beliefShift=()=>go("beliefShift");
+    actions.support=()=>go("support");
+    actions.closing=()=>go("closing");
+    return;
+  }
+
+  if(id==="beliefShift"){
+    screen.innerHTML = backBtn() + `
+      <div class="h1">🧠 Belief Shift</div>
+      <div class="p" style="margin-bottom:14px;">Drag each slider from a reactive thought to an accountability thought. No debate, no shame — just a steadier frame you can act from.</div>
+      <div class="bsColLabels">
+        <div class="bsColLabel bsColLabel-reactive"><span class="bsColDot"></span>Reactive Thought</div>
+        <div class="bsColLabel bsColLabel-account">Accountability Thought<span class="bsColDot"></span></div>
+      </div>
+      <div class="bsStack" id="bsStack"></div>
+      <div class="mutedBox" style="margin-bottom:12px;"><b>Micro-rule:</b> If you feel yourself resisting an accountability thought, you don’t have to fully agree. Try moving one notch toward <i>“I can take this seriously”</i> — that’s enough for a next step.</div>
+      <div class="bsHint">Drag handle or use ← → keys</div>
+      ${grid(btn("Back","nextSteps") + btn("Finish","closing","btn btnPrimary"))}
+    `;
+    setTimeout(initBeliefShift, 0);
+    actions.nextSteps=()=>go("nextSteps");
+    actions.closing=()=>go("closing");
+    return;
+  }
+
+  if(id==="learn"){
+  screen.innerHTML = backBtn() + `
+    <div class="h1">Learn</div>
+    <div class="p">Choose a topic to explore. Each one opens a slide deck you can click through at your own pace.</div>
+
+    <div class="pvGrid" style="margin:14px 0 18px;">
+      <button class="pvBtn" data-action="openLearnConsent">
+        <span class="pvIcon">&#128218;</span>
+        <span class="pvLabel">Consent</span>
+        <span class="pvSub">What it is, what it isn’t, and why it matters</span>
+      </button>
+      <button class="pvBtn" data-action="openLearnRapeCulture">
+        <span class="pvIcon">&#127757;</span>
+        <span class="pvLabel">Rape Culture</span>
+        <span class="pvSub">How harmful norms develop and how to push back</span>
+      </button>
+      <button class="pvBtn" data-action="openLearnRelationships">
+        <span class="pvIcon">&#10084;&#65039;</span>
+        <span class="pvLabel">Healthy Relationships</span>
+        <span class="pvSub">Signs of healthy and unhealthy dynamics</span>
+      </button>
+      <button class="pvBtn" data-action="openLearnInternet">
+        <span class="pvIcon">&#128241;</span>
+        <span class="pvLabel">Internet Safety</span>
+        <span class="pvSub">Digital consent, privacy, and online harm</span>
+      </button>
+    </div>
+
+    <div class="grid" style="margin-top:4px;">
+      ${btn("Back","nextSteps")}
+      ${btn("Finish","closing","btn btnPrimary")}
+    </div>
+  `;
+
+  function slideModal(title, src){
+    openModal(title, `
+      <div style="position:relative;padding-top:56.25%;height:0;overflow:hidden;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.25);margin-top:4px;">
+        <iframe src="${src}"
+          frameborder="0" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"
+          style="position:absolute;top:0;left:0;width:100%;height:100%;">
+        </iframe>
+      </div>
+    `);
+    // Widen modal for slides
+    const m = document.querySelector('.modalOverlay .modal');
+    if(m) m.style.width = 'min(820px, 96vw)';
+  }
+
+  actions.openLearnConsent      = ()=> slideModal("&#128218; Consent", "https://docs.google.com/presentation/d/e/2PACX-1vTqott0nhwUnLhRY72eAyETCUjW-Lk-bCAZDao9CzBgaht8NMUydeVce8thEtwnBqabaYGHwURKpiq8/pubembed?start=false&loop=false&delayms=15000");
+  actions.openLearnRapeCulture  = ()=> slideModal("&#127757; Rape Culture", "https://docs.google.com/presentation/d/e/2PACX-1vQPIVFjSCoaMv4IQq5R5pfpaaFYxzBLx1efOQMv0qDuyA5lI1A4HiNP7_xFPjGXSkSey9D_ZKD5ng0-/pubembed?start=false&loop=false&delayms=15000");
+  actions.openLearnRelationships = ()=> slideModal("&#10084;&#65039; Healthy Relationships", "https://docs.google.com/presentation/d/e/2PACX-1vTCWnNXmG3Ogfm-2e8kRW4J0pttp01H0pK9g8IF-giC5y5UlnZsKpZ0cr8Yv2pS5COIXapqs-dGDubK/pubembed?start=false&loop=false&delayms=10000");
+  actions.openLearnInternet      = ()=> slideModal("&#128241; Internet Safety", "https://docs.google.com/presentation/d/e/2PACX-1vQEgAN4ux7TLN9KoZv4WXhZ82ddSiWNWzrmCL3rSnqDqRslK-9tRIZXpGcW7MqmQ01fGsUqBP-fY7_m/pubembed?start=false&loop=false&delayms=10000");
+
+  actions.nextSteps = ()=>go("nextSteps");
+  actions.closing = ()=>go("closing");
+  return;
+}
+
+  if(id==="prevent"){
+    screen.innerHTML = backBtn() + `
+      <div class="h1">Prevent it from happening again</div>
+      <div class="p">These tools can help you build real prevention skills \u2014 not just rules to memorize.</div>
+
+      <div class="pvGrid">
+        <button class="pvBtn" data-action="openConsentRoadModal">
+          <span class="pvIcon">&#128739;&#65039;</span>
+          <span class="pvLabel">Ongoing Consent Road</span>
+          <span class="pvSub">Practice check-ins in real time</span>
+        </button>
+        <button class="pvBtn" data-action="openSurvivorModal">
+          <span class="pvIcon">&#128172;</span>
+          <span class="pvLabel">Supporting a Survivor</span>
+          <span class="pvSub">What to say \u2014 and what not to say</span>
+        </button>
+        <button class="pvBtn" data-action="openCultureModal">
+          <span class="pvIcon">&#127757;</span>
+          <span class="pvLabel">Shift the Culture</span>
+          <span class="pvSub">Ways to build consent culture around you</span>
+        </button>
+        <button class="pvBtn" data-action="openBystanderModal">
+          <span class="pvIcon">✋🛡️</span>
+          <span class="pvLabel">Bystander Intervention</span>
+          <span class="pvSub">How to step in safely</span>
+        </button>
+      </div>
+
+      ${grid(btn("Back","nextSteps") + btn("Finish","closing","btn btnPrimary"))}
+    `;
+
+    // ── Consent Road modal ──
+    actions.openConsentRoadModal = ()=>{
+      openModal("&#128739;&#65039; Ongoing Consent Road", `
+        <div class="p" style="color:var(--muted);margin:0 0 10px;">Consent is a <em>repeated practice</em>, not a one-time question. Each tap adds a real check-in phrase to the road.</div>
+        <div class="ocTopCopy" style="margin-bottom:10px;">
+          <p><b>Consent doesn\u2019t carry over.</b> It has to be present throughout an interaction \u2014 and revisited over time.</p>
+          <p>The prevention habit: <b>ask clearly</b>, listen carefully, and stop the moment anything feels uncertain.</p>
+        </div>
+        <div style="margin:0 0 8px;font-size:12px;color:rgba(209,254,255,.5);text-transform:uppercase;letter-spacing:.3px;font-weight:800;text-align:center;">\u2190 Scroll the road \u2192</div>
+        <div class="ocRoadWrap" id="ocRoadWrap" aria-label="Ongoing consent roadmap" style="height:200px;">
+          <div class="ocRoadInner" id="ocRoadInner">
+            <div class="ocRoad" aria-hidden="true"></div>
+            <div id="ocProgressLine"></div>
+            <div id="ocMileLayer"></div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap;">
+          <button id="ocAddBtn" class="ocBtn" type="button">&#10133; Add check-in</button>
+          <button id="ocResetBtn" class="ocBtn ocBtnGhost" type="button">&#8635; Reset</button>
+          <span id="ocCount" style="font-size:12px;color:rgba(209,254,255,.60);font-weight:800;padding:3px 8px;border-radius:999px;border:1px solid rgba(209,254,255,.16);background:rgba(0,0,0,.14);">0 / 11</span>
+        </div>
+        <div id="ocEndNote" class="ocEndNote" style="margin-top:10px;">
+          \u2705 <b>Road complete.</b> Ongoing consent is a <em>pattern</em>, not a moment.
+        </div>
+        <div style="margin-top:8px;"><span id="ocTip" style="font-size:12px;color:rgba(209,254,255,.65);font-style:italic;">Tip: check in when things change.</span></div>
+      `);
+      setTimeout(initOngoingConsentRoad, 0);
+    };
+
+    // ── Supporting a Survivor modal ──
+    actions.openSurvivorModal = ()=>{
+      openModal("&#128172; Supporting a Survivor", `
+        <div class="p" style="color:var(--muted);margin:0 0 14px;">If someone discloses to you, how you respond matters. Here’s what helps — and what causes harm.</div>
+        <div class="ssGrid">
+          <div class="ssCol ssColDo">
+            <div class="ssColHead">&#10003;&nbsp; Try saying</div>
+            <div class="ssItem">“I’m so sorry this happened to you.”</div>
+            <div class="ssItem">“You are not alone. I know there are people that can help.”</div>
+            <div class="ssItem">“How can I support you?”</div>
+            <div class="ssItem">“It’s not your fault.”</div>
+            <div class="ssItem">“I’m glad you felt safe to tell me so I can be here for you.”</div>
+            <div class="ssItem">“You didn’t deserve that to happen to you.”</div>
+          </div>
+          <div class="ssCol ssColDont">
+            <div class="ssColHead">&#10007;&nbsp; Don’t say</div>
+            <div class="ssItem">“Why didn’t you just leave?”</div>
+            <div class="ssItem">“Why were you there?”</div>
+            <div class="ssItem">“If you kissed, you should have known something was going to happen.”</div>
+            <div class="ssItem">“Were you drinking?”</div>
+            <div class="ssItem">“What were you wearing?”</div>
+            <div class="ssItem">“It’s going to be fine; just move on.”</div>
+            <div class="ssItem">“If it was really a big deal, why didn’t you tell me sooner?”</div>
+          </div>
+        </div>
+        <div class="mutedBox" style="margin-top:14px;">Your job is to listen and support — not to investigate, fix, or decide what they should do.</div>
+      `);
+    };
+
+    // ── Shift the Culture modal ──
+    actions.openCultureModal = ()=>{
+      const items = [
+        { emoji:"&#128588;", title:"Create a culture of enthusiastic consent", body:"Only engage in sex-positive activity when there is ENTHUSIASTIC verbal consent. When you model this, others around you learn to as well." },
+        { emoji:"&#128683;", title:"Don\u2019t laugh at rape jokes or \u2018locker room talk\u2019", body:"Speak up when you see people using sexually degrading terms or behavior. Let people know it\u2019s not okay with you \u2014 even a quiet \u201cthat\u2019s not funny\u201d shifts the room." },
+        { emoji:"&#9876;&#65039;", title:"Speak out against the root causes", body:"Don\u2019t buy into ideas which view masculinity as violent and dominant, or femininity as passive, weak, or less valued. Redefine masculinity and challenge gender stereotypes when you encounter them." },
+        { emoji:"&#128064;", title:"Draw a clear line", body:"Do not share intimate images of anyone without their permission, and let your friends know you aren\u2019t okay with them doing it either." },
+        { emoji:"&#127757;", title:"Take an intersectional approach", body:"Rape culture affects us all regardless of gender identity, sexuality, race, religion, or ability. Transgender youth, Indigenous, Brown and Black girls, and people with disabilities are most at-risk and deserve centered support." },
+        { emoji:"&#128101;", title:"Be an active bystander", body:"Not just among your friends, but with ANYONE. Safely intervening signals to the perpetrator that their behavior is unacceptable and may help someone stay safe." },
+        { emoji:"&#9878;&#65039;", title:"Stop victim blaming", body:"Perpetrators are responsible for assault \u2014 NEVER the survivor. A survivor\u2019s sobriety, clothing, and sexual history are not relevant. Ask instead why the perpetrator felt entitled." },
+        { emoji:"&#128483;&#65039;", title:"Educate your peers and start the conversation", body:"Talk to your family and friends about how you can work together to end rape culture and support survivors. Awareness + Action = Culture Change." },
+      ];
+      openModal("&#127757; Shift the Culture", `
+        <div class="p" style="color:var(--muted);margin:0 0 14px;">Culture changes through consistent, small actions. Here are ways you can contribute starting today.</div>
+        <div class="scAccordion">
+          ${items.map((it,i)=>`
+            <div class="scItem" id="scItem${i}">
+              <button class="scHeader" type="button" data-sc="${i}" aria-expanded="false">
+                <span class="scEmoji">${it.emoji}</span>
+                <span class="scTitle">${it.title}</span>
+                <span class="scChev" aria-hidden="true">
+                  <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M2.5 5L7 9.5L11.5 5" stroke="rgba(209,254,255,.78)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+              </button>
+              <div class="scBody" id="scBody${i}">${it.body}</div>
+            </div>
+          `).join('')}
+        </div>
+      `);
+      // accordion logic
+      document.querySelectorAll('.scHeader').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+          const idx = btn.getAttribute('data-sc');
+          const body = document.getElementById('scBody'+idx);
+          const open = body.classList.contains('scOpen');
+          // close all
+          document.querySelectorAll('.scBody').forEach(b=>b.classList.remove('scOpen'));
+          document.querySelectorAll('.scHeader').forEach(b=>{ b.classList.remove('scOpen'); b.setAttribute('aria-expanded','false'); });
+          if(!open){
+            body.classList.add('scOpen');
+            btn.classList.add('scOpen');
+            btn.setAttribute('aria-expanded','true');
+          }
+        });
+      });
+    };
+
+    // ── Bystander Intervention modal ──
+    actions.openBystanderModal = ()=>{
+      openModal("✋🛡️ Bystander Intervention", `
+        <div class="p" style="color:var(--muted);margin:0 0 6px;">Bystander intervention is the idea that we can all step in to help prevent violence, harassment, or abuse \u2014 and it doesn\u2019t have to be aggressive or confrontational.</div>
+
+        <div class="mutedBox" style="margin-bottom:14px;">A bystander is present in about <b>30% of cases</b> of rape, threat of rape, or unwanted sexual contact. It\u2019s natural to not know what to do \u2014 but if one person gets involved, others are likely to follow.</div>
+
+        <div class="biSectionHead">The 4 D\u2019s of Intervention</div>
+        <div class="p" style="color:var(--muted);font-size:12px;margin:-8px 0 10px;">Use whichever fits the moment and your safety level.</div>
+        <div class="biCards">
+          <div class="biCard">
+            <div class="biNum">Distract</div>
+            <div class="biBody">Interrupt without confrontation \u2014 ask for directions, pretend your wallet is missing, suggest going somewhere else. Great when you\u2019re unsure what\u2019s happening or don\u2019t know the people involved. Can be safer than direct intervention if the situation might escalate.</div>
+          </div>
+          <div class="biCard">
+            <div class="biNum">Delegate</div>
+            <div class="biBody">Seek help from a third party \u2014 get a trusted friend, tell a trusted adult, enlist a party host to remove a problematic person. Use this when you don\u2019t feel equipped to handle it alone or when things become more dangerous. Respect the survivor\u2019s privacy.</div>
+          </div>
+          <div class="biCard">
+            <div class="biNum">Direct</div>
+            <div class="biBody">Directly intervene \u2014 tell someone to stop a behavior, separate people, or express disapproval while it\u2019s happening. Consider everyone\u2019s safety level, including yours. Most useful when you know the people involved and feel comfortable stepping in.</div>
+          </div>
+          <div class="biCard">
+            <div class="biNum">Delay</div>
+            <div class="biBody">Check in with someone afterwards \u2014 see how the survivor is doing, or confront the perpetrator separately. Sometimes situations happen in seconds and you can\u2019t act in the moment. If that happens, you are <em>never</em> at fault for the perpetrator\u2019s actions. Following up still matters.</div>
+          </div>
+        </div>
+
+        <div class="biSectionHead" style="margin-top:16px;">Common barriers \u2014 and why to push past them</div>
+        <div class="biBarriers">
+          <div class="biBarrier">\u201cIt\u2019s none of my business.\u201d</div>
+          <div class="biBarrier">\u201cSomeone else will step in.\u201d</div>
+          <div class="biBarrier">\u201cI don\u2019t know what to say.\u201d</div>
+          <div class="biBarrier">\u201cI don\u2019t want to cause a scene.\u201d</div>
+          <div class="biBarrier">\u201cIf I say something, it might start a fight.\u201d</div>
+          <div class="biBarrier">\u201cI\u2019m not sure if this is really crossing the line.\u201d</div>
+        </div>
+        <div class="p" style="color:var(--muted);font-size:12px;margin:8px 0 14px;">It\u2019s better to risk being wrong about a situation than to passively witness harassment. It\u2019s not about being a hero \u2014 it\u2019s about preventing harm.</div>
+
+        <div class="biSectionHead">The BAE Code</div>
+        <div class="p" style="color:var(--muted);font-size:12px;margin:-6px 0 10px;">BAE-code means committing to keep an eye out for <em>anyone</em> who might need help \u2014 even if they aren\u2019t your friend.</div>
+        <div class="biBaeCode">
+          <div class="biBaeItem">Watch out for the safety of everyone, not just your friends</div>
+          <div class="biBaeItem">Always intervene if you see something sketchy</div>
+          <div class="biBaeItem">Don\u2019t send unrequested nude photos</div>
+          <div class="biBaeItem">Don\u2019t pressure someone to send nudes or share them without consent</div>
+          <div class="biBaeItem">Never pressure someone to do something sexually</div>
+          <div class="biBaeItem">Always get enthusiastic consent</div>
+          <div class="biBaeItem">Look out for people who have been drinking and help get them home safely</div>
+          <div class="biBaeItem">Change the conversation away from sexist or negative talk about people</div>
+        </div>
+      `);
+    };
+
+    actions.nextSteps=()=>go("nextSteps");
+    actions.closing=()=>go("closing");
+    return;
+  }
+
+  if(id==="repair"){
+  screen.innerHTML = backBtn() + `
+    <div class="h1">Repair (if appropriate)</div>
+    <div class="p">Accountability means taking responsibility and respecting boundaries — not earning forgiveness. If you reach out, keep it short, don’t ask for comfort, and allow space.</div>
+
+    <div class="note" style="margin-bottom:14px;">
+      <b>Possible script:</b> “I’ve been thinking about what happened. I’m sorry I didn’t pause and check in. You didn’t deserve that. I’ll respect whatever space you want.”
+    </div>
+
+    <div class="repairWrap">
+
+      <div class="repairPanel" id="rbPanel">
+        <div class="panelHeader" id="rbHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="rbBody">
+          <div class="titleBlock">
+            <div class="panelTitle">&#9999;&#65039; Repair Builder</div>
+            <div class="panelSub">Draft an accountable apology step by step</div>
+          </div>
+          <div class="chev" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M2.5 5L7 9.5L11.5 5" stroke="rgba(209,254,255,.78)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+        <div class="panelBody" id="rbBody">
+          <div class="inner">
+            <div class="rbWarning">
+              <b>Before sending:</b> Do not use this to pressure someone. If they asked for no contact, respect that. An apology does not require forgiveness.
+            </div>
+            <div class="rbSection">
+              <div class="rbLabel">1. What are you apologizing for?</div>
+              <textarea class="rbTextarea" id="rbPart1" placeholder="I…"></textarea>
+              <div id="rbFlag1" class="rbFlag">&#9888; Avoid “if,” “but,” or minimizing language — they shift blame.</div>
+            </div>
+            <div class="rbSection">
+              <div class="rbLabel">2. Acknowledge the impact</div>
+              <textarea class="rbTextarea" id="rbPart2" placeholder="I understand that…"></textarea>
+            </div>
+            <div class="rbSection">
+              <div class="rbLabel">3. Respect their space</div>
+              <textarea class="rbTextarea" id="rbPart3" placeholder="I’ll respect whatever space you want."></textarea>
+            </div>
+            <div class="rbSection" style="margin-bottom:0;">
+              <div class="rbLabel">4. Name the behavior change</div>
+              <textarea class="rbTextarea" id="rbPart4" placeholder="Next time, I will…"></textarea>
+            </div>
+            <div class="rbBtnRow">
+              <button class="rbBtn rbBtnGhost" id="rbBuildBtn" type="button">Build Message</button>
+              <button class="rbBtn" id="rbCopyBtn" type="button">Copy</button>
+              <button class="rbBtn rbBtnGhost" id="rbClearBtn" type="button">Clear</button>
+            </div>
+            <div class="rbCopyConfirm" id="rbCopyConfirm">&#10003; Copied to clipboard</div>
+            <div class="rbOutput" id="rbOutput"></div>
+            <div style="font-size:11px;color:var(--muted);margin-top:10px;opacity:.7;">Accountability means clarity, not self-destruction.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="repairPanel" id="forgivePanel">
+        <div class="panelHeader" id="forgiveHeader" tabindex="0" role="button" aria-expanded="false" aria-controls="forgiveBody">
+          <div class="titleBlock">
+            <div class="panelTitle">&#128172; What If They Don’t Forgive Me?</div>
+            <div class="panelSub">Understanding accountability without closure</div>
+          </div>
+          <div class="chev" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M2.5 5L7 9.5L11.5 5" stroke="rgba(209,254,255,.78)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+        <div class="panelBody" id="forgiveBody">
+          <div class="inner">
+            <div class="p" style="margin:0 0 10px;color:var(--muted);">
+              They might not — and that can hurt. But forgiveness isn’t something you’re owed, and it isn’t proof that you “did accountability right.”
+            </div>
+            <div class="p" style="margin:0 0 10px;color:var(--muted);">
+              A solid repair attempt is about <b>responsibility</b> and <b>respecting boundaries</b>, not getting emotional relief.
+            </div>
+            <div class="note" style="margin:0 0 10px;">
+              <b>What accountability looks like either way:</b><br>
+              &bull; Accept their response &mdash; including no response.<br>
+              &bull; Don’t argue, minimize, or ask them to reassure you.<br>
+              &bull; Change your behavior even if you never get closure.<br>
+              &bull; Give space, and don’t keep “checking in” to see if they’re over it.
+            </div>
+            <div class="mutedBox">
+              <b>Reality check:</b> You can’t control whether someone forgives you. You <i>can</i> control whether you repeat harm.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    ${grid(btn("Back","nextSteps") + btn("Finish","closing","btn btnPrimary"))}
+  `;
+
+  function makeRepairToggle(panelId, headerId){
+    const panel  = document.getElementById(panelId);
+    const header = document.getElementById(headerId);
+    if(!panel||!header) return ()=>{};
+    function toggle(){
+      const open = panel.classList.contains('open');
+      panel.classList.toggle('open', !open);
+      header.setAttribute('aria-expanded', String(!open));
+    }
+    function onKey(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(); } }
+    header.addEventListener('click', toggle);
+    header.addEventListener('keydown', onKey);
+    return ()=>{ header.removeEventListener('click', toggle); header.removeEventListener('keydown', onKey); };
+  }
+
+  const cleanRb      = makeRepairToggle('rbPanel','rbHeader');
+  const cleanForgive = makeRepairToggle('forgivePanel','forgiveHeader');
+
+  function rbContainsMinimizing(t){ return ["if "," but ","misunderstand","didn't mean"].some(p=>t.toLowerCase().includes(p)); }
+
+  document.getElementById('rbBuildBtn').addEventListener('click', ()=>{
+    const p1 = document.getElementById('rbPart1').value.trim();
+    const p2 = document.getElementById('rbPart2').value.trim();
+    const p3 = document.getElementById('rbPart3').value.trim();
+    const p4 = document.getElementById('rbPart4').value.trim();
+    document.getElementById('rbFlag1').style.display = rbContainsMinimizing(p1) ? 'block' : 'none';
+    const msg = [p1,p2,p3,p4].filter(Boolean).join('\n\n');
+    const output = document.getElementById('rbOutput');
+    output.textContent = msg || '(Fill in at least one field above.)';
+    output.style.display = 'block';
+  });
+
+  document.getElementById('rbCopyBtn').addEventListener('click', ()=>{
+    const output = document.getElementById('rbOutput');
+    if(!output.textContent || output.style.display==='none') return;
+    const confirm = document.getElementById('rbCopyConfirm');
+    navigator.clipboard.writeText(output.textContent).then(()=>{
+      confirm.classList.add('show');
+      setTimeout(()=>confirm.classList.remove('show'), 2000);
+    }).catch(()=>{});
+  });
+
+  document.getElementById('rbClearBtn').addEventListener('click', ()=>{
+    ['rbPart1','rbPart2','rbPart3','rbPart4'].forEach(id=>{ document.getElementById(id).value=''; });
+    const output = document.getElementById('rbOutput');
+    output.style.display='none'; output.textContent='';
+    document.getElementById('rbFlag1').style.display='none';
+    document.getElementById('rbCopyConfirm').classList.remove('show');
+  });
+
+  actions.nextSteps = () => { cleanRb(); cleanForgive(); go("nextSteps"); };
+  actions.closing   = () => { cleanRb(); cleanForgive(); go("closing"); };
+  return;
+}
+
+    if(id==="support"){
+    screen.innerHTML = card(
+      "Support options",
+      [
+        "If you want structured accountability learning, consider SafeBAE’s accountability training.",
+        "If you’re overwhelmed or unsafe, reaching out for support can help."
+      ],
+      null,
+      `<div class="grid">
+        <a class="btn" href="https://safebae.org/360-schools/accountability-training/" target="_blank" rel="noopener">SafeBAE Accountability Training (external)</a>
+        <a class="btn" href="https://rainn.org/" target="_blank" rel="noopener">RAINN (external)</a>
+        <a class="btn" href="https://988lifeline.org/" target="_blank" rel="noopener">988 Lifeline (external)</a>
+        <a class="btn" href="https://www.crisistextline.org/" target="_blank" rel="noopener">Crisis Text Line (external)</a>
+      </div>` +
+      grid(btn("Back","nextSteps") + btn("Finish","closing","btn btnPrimary"))
+    );
+    actions.nextSteps=()=>go("nextSteps");
+    actions.closing=()=>go("closing");
+    return;
+  }
+
+  if(id==="closing"){
+    screen.innerHTML = card(
+      "You paused. That matters.",
+      [
+        "Taking a minute to reflect reduces the chance of harm happening again.",
+        "If you’re willing to learn and change, that’s important.",
+        "You can restart anytime."
+      ],
+      null,
+      grid(btn("Restart","restart","btn btnPrimary") + btn("Pathways menu","pathMenu"))
+    );
+    actions.restart=()=>reset();
+    actions.pathMenu=()=>go("pathMenu");
+    return;
+  }
+
+  if(id==="pathMenu"){
+    screen.innerHTML = backBtn() + card(
+      "Prototype pathways menu",
+      ["Jump directly into a pathway (for demo)."],
+      null,
+      grid(
+        btn("Freeze","jumpFreeze","btn btnPrimary") +
+        btn("Pulled away","jumpPull") +
+        btn("Drinking","jumpDrink") +
+        btn("Pressure","jumpPressure") +
+        btn("Age/power","jumpAgePower") +
+        btn("Digital","jumpDigital") +
+        btn("Ignored no","jumpCoercion") +
+        btn("Relationship assumed consent","jumpRelationship") +
+        btn("Not sure they wanted it","jumpWanted") +
+        btn("Upset afterward","jumpUpset") +
+        btn("Still not sure","jumpNotSure") +
+        btn("Back to start","landing")
+      )
+    );
+    actions.jumpFreeze=()=>{go("A_freeze_whatItMeans");};
+    actions.jumpPull=()=>{go("C_pulledAway_signal");};
+    actions.jumpDrink=()=>{go("B_drinking_basics");};
+    actions.jumpPressure=()=>{go("D_pressure");};
+    actions.jumpAgePower=()=>{go("E_age_power");};
+    actions.jumpDigital=()=>{go("F_digital");};
+    actions.jumpCoercion=()=>{go("G_coercion");};
+    actions.jumpRelationship=()=>{go("H_relationship");};
+    actions.jumpWanted=()=>{go("I_not_sure_wanted");};
+    actions.jumpUpset=()=>{go("J_upset_after");};
+    actions.jumpNotSure=()=>{go("K_not_sure_what");};
+    actions.landing=()=>go("landing");
+    return;
+  }
+  if(id==="consentEdu"){
+    screen.innerHTML = backBtn() + card(
+      "Understanding Consent",
+      [
+        "<b>Consent is ongoing.</b> It must be clear, voluntary, and can change at any time.",
+        "<b>Silence isn’t consent.</b> If someone freezes, goes quiet, or pulls away — pause and check in.",
+        "<b>Consent requires capacity.</b> Someone who is significantly impaired by alcohol or pressure may not be able to freely agree.",
+        "<b>Relationships don’t equal consent.</b> Consent is required every time."
+      ],
+      `<div class="note">
+        Healthy consent includes active participation, mutual enthusiasm, and the ability to say no without pressure.
+      </div>`,
+      grid(
+        btn("Continue","emotion","btn btnPrimary") +
+        btn("Return to start","landing")
+      )
+    );
+
+    actions.emotion = ()=>go("emotion");
+    actions.landing = ()=>go("landing");
+    return;
+  }
+
+  if(id==="about"){
+    screen.innerHTML = backBtn() + card(
+      "About this prototype",
+      [
+        "This is a prototype of a private accountability and reflection tool. It is designed for moments of uncertainty — when someone is questioning whether they crossed a boundary or harmed someone.",
+        "Rather than labeling or judging, the tool guides users through structured reflection on the situation and their emotional responses. It helps people pause, examine specific behaviors, and understand how factors such as consent, pressure, alcohol, and power dynamics can shape impact.",
+        "The tool is non-punitive and educational. It does not collect personal information, assign labels, or make legal determinations. Its purpose is to reduce harm by increasing awareness, strengthening accountability, and building practical prevention skills that support lasting behavior change.",
+        "This version demonstrates how scenario-based pathways and emotional check-ins work together to guide safer choices moving forward."
+
+      ],
+      null,
+      grid(btn("Back","landing","btn btnPrimary"))
+    );
+    actions.landing=()=>go("landing");
+    return;
+  }
+
+  if(id==="decoy"){
+    screen.innerHTML = backBtn() + card(
+      "Weekly Study Planner",
+      [
+        "Mon: Math • Tue: English • Wed: Science • Thu: History • Fri: Catch-up",
+        "Tip: Break big tasks into 15-minute blocks."
+      ],
+      null,
+      grid(btn("Return to prototype","landing","btn btnPrimary"))
+    );
+    actions.landing=()=>go("landing");
+    return;
+  }
+}
+
+render();
+
+
+// ===== Belief Shift =====
+function initBeliefShift(){
+  var BS_PAIRS = [
+    { left: "They're lying.",                         right: "Even if details differ, something didn't feel okay for them." },
+    { left: "It wasn't that bad.",                    right: "It might not have felt that bad to me — but it might have to them." },
+    { left: "They didn't say no.",                    right: "No isn't the only signal. If it wasn't a clear yes, I should've paused." },
+    { left: "I didn't mean to.",                      right: "I can mean well and still mess up." },
+    { left: "This is unfair to me.",                  right: "It can feel unfair and still be something I need to own." },
+    { left: "If I admit anything, I'm a bad person.", right: "Owning a mistake isn't the same as being evil." },
+    { left: "They're trying to ruin my life.",        right: "This might be about them feeling unsafe — not revenge." },
+    { left: "They should've just told me.",           right: "Not everyone can speak up in the moment — that's why I need to check in." },
+    { left: "Everyone does this.",                    right: "I don't want my standard to be what everyone else does. I want it to be safe." },
+    { left: "I was drunk too.",                       right: "If alcohol made it unclear, that's my cue to stop." },
+    { left: "I need them to say it's okay.",          right: "It's not their job to fix my guilt." },
+    { left: "I'm being attacked.",                    right: "I feel attacked — and I can still listen." },
+    { left: "I can't handle this.",                   right: "I don't have to handle all of it, just one step at a time." }
+  ];
+  var stack = document.getElementById('bsStack');
+  if(!stack) return;
+  stack.innerHTML = '';
+  function bsClamp(n,lo,hi){ return Math.max(lo,Math.min(hi,n)); }
+  function bsEsc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function bsApply(card, pos, i){
+    pos = bsClamp(pos,0,100); card.dataset.pos = String(pos);
+    var mask=card.querySelector('.bs-mask-'+i), inner=card.querySelector('.bs-inner-'+i),
+        track=card.querySelector('.bs-track-'+i), knob=card.querySelector('.bs-knob-'+i);
+    if(mask)  mask.style.width  = pos+'%';
+    if(inner) inner.style.width = card.offsetWidth+'px';
+    if(track) track.style.left  = pos+'%';
+    if(knob)  knob.setAttribute('aria-valuenow', String(Math.round(pos)));
+  }
+  BS_PAIRS.forEach(function(pair,i){
+    var card = document.createElement('div');
+    card.className='bsCard'; card.dataset.pos='0';
+    card.innerHTML=
+      '<span class="bsCardNum">'+String(i+1).padStart(2,'0')+'</span>'+
+      '<div class="bsSide bsSideLeft"><div class="bsSideText">'+bsEsc(pair.left)+'</div></div>'+
+      '<div class="bsRevealMask bs-mask-'+i+'">'+
+        '<div class="bsRevealInner bsSide bsSideRight bs-inner-'+i+'">'+
+          '<div class="bsReframeText">'+bsEsc(pair.right)+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="bsHandleTrack bs-track-'+i+'">'+
+        '<div class="bsDividerLine"></div>'+
+        '<div class="bsKnob bs-knob-'+i+'" tabindex="0" role="slider" aria-label="Belief shift" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">'+
+          '<svg width="16" height="16" viewBox="0 0 24 24" fill="none">'+
+            '<path d="M9 18l-6-6 6-6" stroke="rgba(255,160,160,.85)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>'+
+            '<path d="M15 6l6 6-6 6" stroke="rgba(21,255,200,.95)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>'+
+          '</svg>'+
+        '</div>'+
+      '</div>';
+    stack.appendChild(card);
+    bsApply(card,0,i);
+    new ResizeObserver(function(){ bsApply(card,Number(card.dataset.pos),i); }).observe(card);
+    var dragging=false, knob=card.querySelector('.bs-knob-'+i);
+    function posFromEvt(e){
+      var rect=card.getBoundingClientRect(), cx=(e.touches&&e.touches[0])?e.touches[0].clientX:e.clientX;
+      return bsClamp(((cx-rect.left)/rect.width)*100,0,100);
+    }
+    knob.addEventListener('pointerdown',function(e){ dragging=true; knob.classList.add('bsDragging'); knob.setPointerCapture(e.pointerId); e.stopPropagation(); });
+    knob.addEventListener('pointermove',function(e){ if(!dragging)return; bsApply(card,posFromEvt(e),i); });
+    knob.addEventListener('pointerup',function(){ dragging=false; knob.classList.remove('bsDragging'); });
+    knob.addEventListener('pointercancel',function(){ dragging=false; knob.classList.remove('bsDragging'); });
+    card.addEventListener('pointerdown',function(e){ if(e.target.closest('.bs-knob-'+i))return; bsApply(card,posFromEvt(e),i); });
+    knob.addEventListener('keydown',function(e){
+      var step=e.shiftKey?12:5, cur=Number(card.dataset.pos);
+      if(e.key==='ArrowRight'){e.preventDefault();bsApply(card,cur+step,i);}
+      if(e.key==='ArrowLeft'){e.preventDefault();bsApply(card,cur-step,i);}
+      if(e.key==='Home'){e.preventDefault();bsApply(card,0,i);}
+      if(e.key==='End'){e.preventDefault();bsApply(card,100,i);}
+    });
+  });
+}
+</script>
+</body>
+</html>
